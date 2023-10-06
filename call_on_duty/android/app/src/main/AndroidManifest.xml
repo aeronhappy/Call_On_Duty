@@ -1,7 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.youtube_app">
-
+    
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <queries>
+        <intent>
+             <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
    <application
         android:label="Call on Duty"
         android:name="${applicationName}"

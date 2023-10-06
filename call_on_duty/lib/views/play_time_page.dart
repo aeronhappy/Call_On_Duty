@@ -26,9 +26,15 @@ class _PlayTimePageState extends State<PlayTimePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    videoPlayerController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
+        body: SizedBox(
             height: MediaQuery.of(context).size.width,
             child: VideoPlayer(videoPlayerController)));
   }

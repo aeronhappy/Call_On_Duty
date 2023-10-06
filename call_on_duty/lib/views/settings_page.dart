@@ -1,0 +1,112 @@
+import 'package:call_on_duty/designs/colors/app_colors.dart';
+import 'package:call_on_duty/designs/fonts/text_style.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool? isMusicOn = false;
+  bool? isSoundEffectsOn = false;
+  bool? isVibrationOn = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: secondaryColor,
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 100, width: double.infinity),
+            Text(
+              'SETTINGS',
+              textAlign: TextAlign.center,
+              style: titleText(24, FontWeight.bold, Colors.white),
+            ),
+            Row(
+              children: [
+                Text(
+                  'Music',
+                  style: bodyText(18, FontWeight.w700, Colors.white),
+                ),
+                Checkbox(
+                    side: const BorderSide(color: Colors.white),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    fillColor: MaterialStateProperty.all<Color>(Colors.white),
+                    checkColor: Colors.red,
+                    activeColor: Colors.white,
+                    value: isMusicOn,
+                    onChanged: (newValue) {
+                      setState(() {
+                        isMusicOn = newValue;
+                      });
+                      if (newValue!) {
+                        playMusic();
+                      } else {
+                        stopMusic();
+                      }
+                    })
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Sound Effects',
+                  style: bodyText(18, FontWeight.w700, Colors.white),
+                ),
+                Checkbox(
+                    side: const BorderSide(color: Colors.white),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    fillColor: MaterialStateProperty.all<Color>(Colors.white),
+                    checkColor: Colors.red,
+                    activeColor: Colors.white,
+                    value: isSoundEffectsOn,
+                    onChanged: (newValue) {
+                      setState(() {
+                        isSoundEffectsOn = newValue;
+                      });
+                    })
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  'Vibration',
+                  style: bodyText(18, FontWeight.w700, Colors.white),
+                ),
+                Checkbox(
+                    side: const BorderSide(color: Colors.white),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    fillColor: MaterialStateProperty.all<Color>(Colors.white),
+                    checkColor: Colors.red,
+                    activeColor: Colors.white,
+                    value: isVibrationOn,
+                    onChanged: (newValue) {
+                      setState(() {
+                        isVibrationOn = newValue;
+                      });
+                      if (newValue!) {
+                        HapticFeedback.vibrate();
+                      }
+                    })
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

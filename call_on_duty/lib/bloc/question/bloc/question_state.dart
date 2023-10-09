@@ -13,6 +13,11 @@ class LoadedRandomQuestions extends QuestionState {
   const LoadedRandomQuestions({required this.randomQuestions});
 }
 
+class LoadedGameMode extends QuestionState {
+  final List<QuestionDifficulty> modes;
+  const LoadedGameMode({required this.modes});
+}
+
 class FailedQuestion extends QuestionState {
   final String error;
   const FailedQuestion({required this.error});

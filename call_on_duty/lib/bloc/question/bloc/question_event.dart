@@ -8,6 +8,8 @@ abstract class QuestionEvent extends Equatable {
 }
 
 class GetRandomQuestions extends QuestionEvent {
-  final int numberOfQuestions;
-  const GetRandomQuestions({required this.numberOfQuestions});
+  final QuestionDifficulty questionDifficulty;
+  const GetRandomQuestions({required this.questionDifficulty});
 }
+
+class GetGameMode extends QuestionEvent {}

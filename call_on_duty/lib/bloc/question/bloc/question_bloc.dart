@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:call_on_duty/repository/question_repository.dart';
+import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:equatable/equatable.dart';
-import 'package:call_on_duty/repository/contract/i_question_repository.dart';
 import 'package:call_on_duty/services/contract/i_network_info_services.dart';
 import '../../../model/question_model.dart';
 
@@ -17,13 +18,19 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     on<GetRandomQuestions>((event, emit) async {
       try {
         emit(LoadingQuestion());
-        if (await networkInfoServices.isConnected) {
-          List<QuestionModel> randomQuestions = await questionRepository
-              .getRandomQuestions(event.numberOfQuestions);
-          emit(LoadedRandomQuestions(randomQuestions: randomQuestions));
-        } else {
-          emit(NoNetworkConnection());
-        }
+        List<QuestionModel> listOfQuestions = await questionRepository
+            .getRandomQuestions(event.questionDifficulty);
+        emit(LoadedRandomQuestions(randomQuestions: listOfQuestions));
+      } catch (e) {
+        emit(FailedQuestion(error: e.toString()));
+      }
+    });
+
+    on<GetGameMode>((event, emit) async {
+      try {
+        List<QuestionDifficulty> listOfMode =
+            await questionRepository.getMode();
+        emit(LoadedGameMode(modes: listOfMode));
       } catch (e) {
         emit(FailedQuestion(error: e.toString()));
       }

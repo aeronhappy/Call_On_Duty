@@ -1,1 +1,1 @@
-enum QuestionDifficulty { easy, medium, hard }
+enum QuestionDifficulty { mild, moderate, severe }

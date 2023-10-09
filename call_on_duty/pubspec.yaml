@@ -77,7 +77,6 @@ flutter:
   assets:
     - assets/
     - assets/icon/
-    - assets/onboard/
     - assets/video/
     - assets/bg_music/
 

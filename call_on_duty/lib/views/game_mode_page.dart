@@ -32,15 +32,18 @@ class _GameModePageState extends State<GameModePage> {
               child: ListView.builder(
                 itemCount: listOfGame.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 50,
-                    decoration: const ShapeDecoration(
-                        color: Colors.white,
-                        shape: StadiumBorder(side: BorderSide())),
-                    child: Center(
-                      child: Text(
-                        listOfGame[index],
-                        style: bodyText(18, FontWeight.w500, secondaryColor),
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Container(
+                      height: 50,
+                      decoration: const ShapeDecoration(
+                          color: Colors.white,
+                          shape: StadiumBorder(side: BorderSide())),
+                      child: Center(
+                        child: Text(
+                          listOfGame[index],
+                          style: bodyText(18, FontWeight.w500, secondaryColor),
+                        ),
                       ),
                     ),
                   );

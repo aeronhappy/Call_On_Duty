@@ -3,6 +3,7 @@ import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -12,9 +13,25 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool? isMusicOn = false;
-  bool? isSoundEffectsOn = false;
-  bool? isVibrationOn = false;
+  bool? isMusicOn = true;
+  bool? isSoundEffectsOn = true;
+  bool? isVibrationOn = true;
+
+  getSettings() async {
+    var sharedPref = await SharedPreferences.getInstance();
+
+    setState(() {
+      isMusicOn = sharedPref.getBool('isMusicOn') ?? true;
+      isSoundEffectsOn = sharedPref.getBool('isSoundEffectsOn') ?? true;
+      isVibrationOn = sharedPref.getBool('isVibrationOn') ?? true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSettings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +64,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     checkColor: Colors.red,
                     activeColor: Colors.white,
                     value: isMusicOn,
-                    onChanged: (newValue) {
+                    onChanged: (newValue) async {
+                      var sharedPref = await SharedPreferences.getInstance();
+                      await sharedPref.setBool('isMusicOn', newValue!);
                       setState(() {
                         isMusicOn = newValue;
                       });
-                      if (newValue!) {
+                      if (newValue) {
                         playMusic();
                       } else {
                         stopMusic();
@@ -73,7 +92,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     checkColor: Colors.red,
                     activeColor: Colors.white,
                     value: isSoundEffectsOn,
-                    onChanged: (newValue) {
+                    onChanged: (newValue) async {
+                      var sharedPref = await SharedPreferences.getInstance();
+                      await sharedPref.setBool('isSoundEffectsOn', newValue!);
                       setState(() {
                         isSoundEffectsOn = newValue;
                       });
@@ -94,11 +115,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     checkColor: Colors.red,
                     activeColor: Colors.white,
                     value: isVibrationOn,
-                    onChanged: (newValue) {
+                    onChanged: (newValue) async {
+                      var sharedPref = await SharedPreferences.getInstance();
+                      await sharedPref.setBool('isVibrationOn', newValue!);
                       setState(() {
                         isVibrationOn = newValue;
                       });
-                      if (newValue!) {
+                      if (newValue) {
                         HapticFeedback.vibrate();
                       }
                     })

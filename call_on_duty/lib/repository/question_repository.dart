@@ -51,10 +51,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -64,10 +68,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -77,10 +85,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -90,10 +102,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -103,10 +119,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -116,10 +136,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
     QuestionModel(
@@ -129,10 +153,14 @@ class QuestionRepository implements IQuestionRepository {
       video: 'assets/video/video_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
-        const AnswerModel(id: 'a1', value: 'Alcohol', image: ''),
-        const AnswerModel(id: 'a2', value: 'Betadine', image: ''),
-        const AnswerModel(id: 'a3', value: 'Tubig', image: ''),
-        const AnswerModel(id: 'a4', value: 'Dahon', image: ''),
+        const AnswerModel(
+            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
       ],
     ),
   ];

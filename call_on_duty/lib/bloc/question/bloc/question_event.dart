@@ -1,15 +1,17 @@
 part of 'question_bloc.dart';
 
-abstract class QuestionEvent extends Equatable {
-  const QuestionEvent();
-
-  @override
-  List<Object> get props => [];
-}
+abstract class QuestionEvent {}
 
 class GetRandomQuestions extends QuestionEvent {
   final QuestionDifficulty questionDifficulty;
-  const GetRandomQuestions({required this.questionDifficulty});
+  GetRandomQuestions({required this.questionDifficulty});
 }
 
 class GetGameMode extends QuestionEvent {}
+
+class SubmitAnswer extends QuestionEvent {
+  final bool isCorrect;
+  SubmitAnswer({required this.isCorrect});
+}
+
+class ClickNextPage extends QuestionEvent {}

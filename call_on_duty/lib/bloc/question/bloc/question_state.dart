@@ -1,28 +1,31 @@
 part of 'question_bloc.dart';
 
-abstract class QuestionState extends Equatable {
-  const QuestionState();
-  @override
-  List<Object> get props => [];
-}
+abstract class QuestionState {}
 
 class QuestionInitial extends QuestionState {}
 
 class LoadedRandomQuestions extends QuestionState {
   final List<QuestionModel> randomQuestions;
-  const LoadedRandomQuestions({required this.randomQuestions});
+  LoadedRandomQuestions({required this.randomQuestions});
 }
 
 class LoadedGameMode extends QuestionState {
   final List<QuestionDifficulty> modes;
-  const LoadedGameMode({required this.modes});
+  LoadedGameMode({required this.modes});
 }
 
 class FailedQuestion extends QuestionState {
   final String error;
-  const FailedQuestion({required this.error});
+  FailedQuestion({required this.error});
 }
 
 class LoadingQuestion extends QuestionState {}
 
 class NoNetworkConnection extends QuestionState {}
+
+/////
+class NextPage extends QuestionState {}
+
+class WrongAnswer extends QuestionState {}
+
+class CorrectAnswer extends QuestionState {}

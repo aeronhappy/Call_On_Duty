@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
+import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
+import 'package:call_on_duty/widgets/correct_answer_popup%20copy.dart';
+import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
@@ -15,8 +20,11 @@ class PlayTimePage extends StatefulWidget {
 }
 
 class _PlayTimePageState extends State<PlayTimePage> {
+  PageController pageController = PageController();
   late VideoPlayerController videoPlayerController;
-  int index = 0;
+  bool isDone = false;
+  List<QuestionModel> listOfQuestion = [];
+  List<int> indexList = [];
 
   @override
   void initState() {
@@ -36,11 +44,20 @@ class _PlayTimePageState extends State<PlayTimePage> {
   void playVideo(String videoInQuestion) {
     setState(() {
       videoPlayerController = VideoPlayerController.asset(videoInQuestion);
-
       videoPlayerController.addListener(() {
-        setState(() {});
+        setState(() {
+          if (videoPlayerController.value.duration != Duration.zero) {
+            if (videoPlayerController.value.position ==
+                videoPlayerController.value.duration) {
+              isDone = true;
+            } else {
+              isDone = false;
+            }
+          } else {
+            isDone = false;
+          }
+        });
       });
-      videoPlayerController.setLooping(false);
       videoPlayerController.initialize().then((_) => setState(() {}));
       videoPlayerController.play();
     });
@@ -49,48 +66,126 @@ class _PlayTimePageState extends State<PlayTimePage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<QuestionBloc, QuestionState>(
-      listener: (context, state) {
-        if (state is LoadedRandomQuestions) {
-          // setState(() {
-          //   playVideo(state.randomQuestions[index].video);
-          // });
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(title: const Text('Play')),
-          body: BlocBuilder<QuestionBloc, QuestionState>(
-            builder: (context, state) {
-              if (state is LoadedRandomQuestions) {
-                List<QuestionModel> listOfQuestion = state.randomQuestions;
-                return Container(
-                  color: secondaryColor,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: PageView.builder(
-                      onPageChanged: (index) {
-                        setState(() {
-                          playVideo(state.randomQuestions[index].video);
-                        });
-                      },
-                      itemCount: listOfQuestion.length,
-                      itemBuilder: (context, index) {
-                        return VideoPlayer(videoPlayerController);
-                      }),
-                );
-              }
-              return const CircularProgressIndicator(color: Colors.white);
-            },
-          )),
-    );
-    // return BlocListener<QuestionBloc, QuestionState>(
-    //   listener: (context, state) {
-    //     if (state is LoadedRandomQuestions) {
-    //       setState(() {
-    //         playVideo(state.randomQuestions[index].video);
-    //       });
-    //     }
-    //   },
-    //   child: VideoPlayer(videoPlayerController),
-    // );
+        listener: (context, state) {
+          if (state is LoadedRandomQuestions) {
+            setState(() {
+              listOfQuestion = state.randomQuestions;
+              playVideo(state.randomQuestions[0].video);
+            });
+          }
+          if (state is CorrectAnswer) {
+            correctAnswerDialog(context);
+          }
+          if (state is WrongAnswer) {
+            wrongAnswerDialog(context);
+          }
+        },
+        child: Scaffold(
+            body: Stack(
+          children: [
+            VideoPlayer(videoPlayerController),
+            isDone
+                ? Container(
+                    color: transparentBlackColor,
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: PageView.builder(
+                        controller: pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onPageChanged: (index) {
+                          setState(() {
+                            playVideo(listOfQuestion[index].video);
+                          });
+                        },
+                        itemCount: listOfQuestion.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Center(
+                                  child: GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20),
+                                      gridDelegate:
+                                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                                              maxCrossAxisExtent: 220,
+                                              childAspectRatio: 1.3,
+                                              crossAxisSpacing: 20,
+                                              mainAxisSpacing: 20),
+                                      itemCount:
+                                          listOfQuestion[index].choices.length,
+                                      itemBuilder: (context, answerIndex) {
+                                        return indexList.contains(answerIndex)
+                                            ? Container()
+                                            : AnimatedContainer(
+                                                duration: const Duration(
+                                                    milliseconds: 5000),
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  onTap: () {
+                                                    if (listOfQuestion[index]
+                                                        .answersId
+                                                        .contains(
+                                                            listOfQuestion[
+                                                                    index]
+                                                                .choices[
+                                                                    answerIndex]
+                                                                .id)) {
+                                                      setState(() {
+                                                        indexList
+                                                            .add(answerIndex);
+                                                      });
+                                                      context
+                                                          .read<QuestionBloc>()
+                                                          .add(SubmitAnswer(
+                                                              isCorrect: true));
+                                                    } else {
+                                                      context
+                                                          .read<QuestionBloc>()
+                                                          .add(SubmitAnswer(
+                                                              isCorrect:
+                                                                  false));
+                                                    }
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: CircleAvatar(
+                                                      child: Image.asset(
+                                                          listOfQuestion[index]
+                                                              .choices[
+                                                                  answerIndex]
+                                                              .image),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                      })));
+                        }),
+                  )
+                : Container(),
+            Positioned(
+              top: 40,
+              left: 20,
+              child: Material(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Text(
+                        widget.questionDifficulty.name.toUpperCase(),
+                        style: titleText(20, FontWeight.bold, Colors.white),
+                      ))),
+            ),
+          ],
+        )));
   }
 }

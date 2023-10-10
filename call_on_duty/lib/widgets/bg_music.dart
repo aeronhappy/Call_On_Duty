@@ -12,6 +12,10 @@ playMusic() {
   bgAudioPlayer.loop('bg_music/bg_1.mp3');
 }
 
+playMusicLowVolume() {
+  bgAudioPlayer.loop('bg_music/bg_1.mp3', volume: .2);
+}
+
 stopMusic() {
   audioP.stop();
 }

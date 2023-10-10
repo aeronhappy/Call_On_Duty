@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
-import 'package:call_on_duty/widgets/correct_answer_popup%20copy.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
+import 'package:call_on_duty/widgets/correct_answer_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,11 +49,14 @@ class _PlayTimePageState extends State<PlayTimePage> {
             if (videoPlayerController.value.position ==
                 videoPlayerController.value.duration) {
               isDone = true;
+              playMusic();
             } else {
               isDone = false;
+              playMusicLowVolume();
             }
           } else {
             isDone = false;
+            playMusicLowVolume();
           }
         });
       });
@@ -98,7 +100,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                           });
                         },
                         itemCount: listOfQuestion.length,
-                        itemBuilder: (context, index) {
+                        itemBuilder: (context, questionIndex) {
                           return Padding(
                               padding: const EdgeInsets.all(20),
                               child: Center(
@@ -114,41 +116,44 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                               childAspectRatio: 1.3,
                                               crossAxisSpacing: 20,
                                               mainAxisSpacing: 20),
-                                      itemCount:
-                                          listOfQuestion[index].choices.length,
+                                      itemCount: listOfQuestion[questionIndex]
+                                          .choices
+                                          .length,
                                       itemBuilder: (context, answerIndex) {
                                         return indexList.contains(answerIndex)
                                             ? Container()
                                             : AnimatedContainer(
                                                 duration: const Duration(
                                                     milliseconds: 5000),
+                                                curve: Curves.bounceIn,
                                                 child: InkWell(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           100),
                                                   onTap: () {
-                                                    if (listOfQuestion[index]
-                                                        .answersId
-                                                        .contains(
-                                                            listOfQuestion[
-                                                                    index]
-                                                                .choices[
-                                                                    answerIndex]
-                                                                .id)) {
-                                                      setState(() {
-                                                        indexList
-                                                            .add(answerIndex);
-                                                      });
-                                                      context
-                                                          .read<QuestionBloc>()
-                                                          .add(SubmitAnswer(
-                                                              isCorrect: true));
-                                                    } else {
-                                                      context
-                                                          .read<QuestionBloc>()
-                                                          .add(SubmitAnswer(
-                                                              isCorrect:
-                                                                  false));
+                                                    if (QuestionDifficulty
+                                                            .mild ==
+                                                        widget
+                                                            .questionDifficulty) {
+                                                      mildSubmitAnswer(
+                                                          questionIndex,
+                                                          answerIndex);
+                                                    }
+                                                    if (QuestionDifficulty
+                                                            .moderate ==
+                                                        widget
+                                                            .questionDifficulty) {
+                                                      moderateSubmitAnswer(
+                                                          questionIndex,
+                                                          answerIndex);
+                                                    }
+                                                    if (QuestionDifficulty
+                                                            .severe ==
+                                                        widget
+                                                            .questionDifficulty) {
+                                                      severeSubmitAnswer(
+                                                          questionIndex,
+                                                          answerIndex);
                                                     }
                                                   },
                                                   child: Padding(
@@ -156,11 +161,17 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                                         const EdgeInsets.all(
                                                             10),
                                                     child: CircleAvatar(
-                                                      child: Image.asset(
-                                                          listOfQuestion[index]
-                                                              .choices[
-                                                                  answerIndex]
-                                                              .image),
+                                                      child: Text(
+                                                        listOfQuestion[
+                                                                questionIndex]
+                                                            .choices[
+                                                                answerIndex]
+                                                            .value,
+                                                        style: titleText(
+                                                            16,
+                                                            FontWeight.w500,
+                                                            Colors.white),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -187,5 +198,86 @@ class _PlayTimePageState extends State<PlayTimePage> {
             ),
           ],
         )));
+  }
+
+  void mildSubmitAnswer(int questionIndex, int answerIndex) {
+    if (listOfQuestion[questionIndex]
+        .answersId
+        .contains(listOfQuestion[questionIndex].choices[answerIndex].id)) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else {
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+    }
+  }
+
+  void moderateSubmitAnswer(int questionIndex, int answerIndex) {
+    if (indexList.isEmpty &&
+        listOfQuestion[questionIndex].answersId[0] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 1 &&
+        listOfQuestion[questionIndex].answersId[1] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 2 &&
+        listOfQuestion[questionIndex].answersId[2] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 3 &&
+        listOfQuestion[questionIndex].answersId[3] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else {
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+    }
+  }
+
+  void severeSubmitAnswer(int questionIndex, int answerIndex) {
+    if (indexList.isEmpty &&
+        listOfQuestion[questionIndex].answersId[0] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 1 &&
+        listOfQuestion[questionIndex].answersId[1] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 2 &&
+        listOfQuestion[questionIndex].answersId[2] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else if (indexList.length == 3 &&
+        listOfQuestion[questionIndex].answersId[3] ==
+            listOfQuestion[questionIndex].choices[answerIndex].id) {
+      setState(() {
+        indexList.add(answerIndex);
+      });
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+    } else {
+      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+    }
   }
 }

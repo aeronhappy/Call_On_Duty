@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
@@ -148,6 +150,8 @@ class _DashboardPageState extends State<DashboardPage> {
           duration: Duration(microseconds: 500),
           top: 40,
           right: 20,
+          bottom: isOpenPrivacy ? 40 : null,
+          left: isOpenPrivacy ? 20 : null,
           child: Material(
             elevation: 5,
             borderRadius: BorderRadius.circular(100),
@@ -159,13 +163,86 @@ class _DashboardPageState extends State<DashboardPage> {
                 });
               },
               child: AnimatedContainer(
-                duration: Duration(microseconds: 500),
+                duration: Duration(milliseconds: 300),
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
                     color: secondaryColor,
-                    borderRadius: BorderRadius.circular(100)),
-                child: Icon(Icons.question_mark_rounded, color: Colors.white),
+                    borderRadius:
+                        BorderRadius.circular(isOpenPrivacy ? 12 : 100)),
+                child: !isOpenPrivacy
+                    ? Icon(Icons.question_mark_rounded, color: Colors.white)
+                    : Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(
+                                'Privacy Policy and \n Terms of Use',
+                                textAlign: TextAlign.center,
+                                style: titleText(
+                                    28, FontWeight.bold, Colors.white),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    color: lightPrimarybgColor,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Text(
+                                  textPrivacy,
+                                  textAlign: TextAlign.center,
+                                  style: bodyText(
+                                      18, FontWeight.normal, Colors.black),
+                                ),
+                              ),
+                              Column(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        isOpenPrivacy = !isOpenPrivacy;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: lightPrimarybgColor,
+                                          borderRadius:
+                                              BorderRadius.circular(16)),
+                                      child: Center(
+                                        child: Text(
+                                          'Naiintindihan',
+                                          style: titleText(
+                                              18, FontWeight.bold, Colors.red),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  InkWell(
+                                    onTap: () {
+                                      exit(0);
+                                    },
+                                    child: Container(
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: lightPrimarybgColor,
+                                          borderRadius:
+                                              BorderRadius.circular(16)),
+                                      child: Center(
+                                        child: Text(
+                                          'Umalis',
+                                          style: titleText(
+                                              18, FontWeight.bold, Colors.red),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ]),
+                      ),
               ),
             ),
           ),
@@ -174,3 +251,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 }
+
+String textPrivacy =
+    'Ang larong ito ay naglalaman ng pangkalahatang impormasyon tungkol sa mga kondisyong medikal at paggamot. Ang impormasyon ay payo, at hindi dapat ituring na ganoon. Ang aming kurso sa aplikasyon ng first aid ay hindi kapalit para sa hands-on na pagsasanay sa first aid ng isang akreditado at awtorisadong tagapagbigay ng pagsasanay sa first aid at hindi dapat gamitin sa ganitong paraan.';

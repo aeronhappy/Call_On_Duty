@@ -11,7 +11,8 @@ class GetGameMode extends QuestionEvent {}
 
 class SubmitAnswer extends QuestionEvent {
   final bool isCorrect;
-  SubmitAnswer({required this.isCorrect});
+  final bool isCompleted;
+  SubmitAnswer({required this.isCorrect, required this.isCompleted});
 }
 
 class ClickNextPage extends QuestionEvent {}

@@ -9,6 +9,7 @@ import 'package:call_on_duty/views/game_mode_page.dart';
 import 'package:call_on_duty/views/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -20,7 +21,19 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int currentIndex = 0;
   bool isOpenPrivacy = false;
+  bool isAgreed = false;
   PageController pageController = PageController(initialPage: 0);
+
+  agreePrivacyPolicy() async {
+    var sharedPref = await SharedPreferences.getInstance();
+    isAgreed = sharedPref.getBool('PrivacyPolicy') ?? false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    agreePrivacyPolicy();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,51 +209,88 @@ class _DashboardPageState extends State<DashboardPage> {
                                       18, FontWeight.normal, Colors.black),
                                 ),
                               ),
-                              Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        isOpenPrivacy = !isOpenPrivacy;
-                                      });
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: lightPrimarybgColor,
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      child: Center(
-                                        child: Text(
-                                          'Naiintindihan',
-                                          style: titleText(
-                                              18, FontWeight.bold, Colors.red),
+                              isAgreed
+                                  ? Column(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.white38,
+                                                  width: .5)),
+                                          height: 50,
+                                          child: Center(
+                                            child: Text(
+                                                'I agreed in privacy policy.',
+                                                style: titleText(
+                                                    14,
+                                                    FontWeight.w500,
+                                                    Colors.white38)),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  InkWell(
-                                    onTap: () {
-                                      exit(0);
-                                    },
-                                    child: Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: lightPrimarybgColor,
-                                          borderRadius:
-                                              BorderRadius.circular(16)),
-                                      child: Center(
-                                        child: Text(
-                                          'Umalis',
-                                          style: titleText(
-                                              18, FontWeight.bold, Colors.red),
+                                        SizedBox(height: 20),
+                                        Text(
+                                          'Tap to close',
+                                          style: bodyText(12, FontWeight.w300,
+                                              Colors.white),
+                                        )
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        InkWell(
+                                          onTap: () async {
+                                            var sharedPref =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            sharedPref.setBool(
+                                                'PrivacyPolicy', true);
+                                            setState(() {
+                                              isAgreed = true;
+                                            });
+                                          },
+                                          child: Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: lightPrimarybgColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(16)),
+                                            child: Center(
+                                              child: Text(
+                                                'Naiintindihan',
+                                                style: titleText(
+                                                    18,
+                                                    FontWeight.bold,
+                                                    Colors.red),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        SizedBox(height: 10),
+                                        InkWell(
+                                          onTap: () {
+                                            exit(0);
+                                          },
+                                          child: Container(
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: lightPrimarybgColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(16)),
+                                            child: Center(
+                                              child: Text(
+                                                'Umalis',
+                                                style: titleText(
+                                                    18,
+                                                    FontWeight.bold,
+                                                    Colors.red),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
                             ]),
                       ),
               ),

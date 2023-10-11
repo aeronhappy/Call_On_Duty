@@ -28,4 +28,7 @@ class NextPage extends QuestionState {}
 
 class WrongAnswer extends QuestionState {}
 
-class CorrectAnswer extends QuestionState {}
+class CorrectAnswer extends QuestionState {
+  final bool isCompleted;
+  CorrectAnswer({required this.isCompleted});
+}

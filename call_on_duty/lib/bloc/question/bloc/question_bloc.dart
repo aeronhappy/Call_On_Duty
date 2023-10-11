@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:call_on_duty/repository/question_repository.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:call_on_duty/services/contract/i_network_info_services.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
 import '../../../model/question_model.dart';
 
 part 'question_event.dart';
@@ -37,11 +38,24 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
     on<SubmitAnswer>((event, emit) async {
       try {
+        playEffect(event.isCorrect);
         if (event.isCorrect) {
-          emit(CorrectAnswer());
+          await Future.delayed(const Duration(milliseconds: 1000), () {
+            emit(CorrectAnswer(isCompleted: event.isCompleted));
+          });
         } else {
-          emit(WrongAnswer());
+          await Future.delayed(const Duration(milliseconds: 1000), () {
+            emit(WrongAnswer());
+          });
         }
+      } catch (e) {
+        emit(FailedQuestion(error: e.toString()));
+      }
+    });
+
+    on<ClickNextPage>((event, emit) async {
+      try {
+        emit(NextPage());
       } catch (e) {
         emit(FailedQuestion(error: e.toString()));
       }

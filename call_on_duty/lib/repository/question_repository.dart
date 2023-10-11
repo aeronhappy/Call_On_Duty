@@ -65,68 +65,17 @@ class QuestionRepository implements IQuestionRepository {
       id: 'q2',
       text: 'Anong gamot ang dapat niyang gamitin? ',
       difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/mild_1.mp4',
+      video: 'assets/video/moderate_1.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
         const AnswerModel(
-            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
+            id: 'a1', value: 'Yosi', image: 'assets/icon/alcohol.png'),
         const AnswerModel(
-            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
+            id: 'a2', value: 'Weeds', image: 'assets/icon/betadine.png'),
         const AnswerModel(
-            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
+            id: 'a3', value: 'Alak', image: 'assets/icon/water.png'),
         const AnswerModel(
-            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
-      ],
-    ),
-    QuestionModel(
-      id: 'q3',
-      text: 'Anong gamot ang dapat niyang gamitin? ',
-      difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/mild_1.mp4',
-      answersId: ['a1', 'a2'],
-      choices: <AnswerModel>[
-        const AnswerModel(
-            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
-        const AnswerModel(
-            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
-        const AnswerModel(
-            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
-        const AnswerModel(
-            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
-      ],
-    ),
-    QuestionModel(
-      id: 'q4',
-      text: 'Anong gamot ang dapat niyang gamitin? ',
-      difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/mild_1.mp4',
-      answersId: ['a1', 'a2'],
-      choices: <AnswerModel>[
-        const AnswerModel(
-            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
-        const AnswerModel(
-            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
-        const AnswerModel(
-            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
-        const AnswerModel(
-            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
-      ],
-    ),
-    QuestionModel(
-      id: 'q5',
-      text: 'Anong gamot ang dapat niyang gamitin? ',
-      difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/mild_1.mp4',
-      answersId: ['a1', 'a2'],
-      choices: <AnswerModel>[
-        const AnswerModel(
-            id: 'a1', value: 'Alcohol', image: 'assets/icon/alcohol.png'),
-        const AnswerModel(
-            id: 'a2', value: 'Betadine', image: 'assets/icon/betadine.png'),
-        const AnswerModel(
-            id: 'a3', value: 'Tubig', image: 'assets/icon/water.png'),
-        const AnswerModel(
-            id: 'a4', value: 'Dahon', image: 'assets/icon/dahon.png'),
+            id: 'a4', value: 'Turon', image: 'assets/icon/dahon.png'),
       ],
     ),
 

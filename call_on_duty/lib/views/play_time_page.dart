@@ -76,10 +76,14 @@ class _PlayTimePageState extends State<PlayTimePage> {
             });
           }
           if (state is CorrectAnswer) {
-            correctAnswerDialog(context);
+            correctAnswerDialog(context, state.isCompleted);
           }
           if (state is WrongAnswer) {
             wrongAnswerDialog(context);
+          }
+          if (state is NextPage) {
+            pageController.nextPage(
+                duration: Duration(milliseconds: 300), curve: Curves.bounceIn);
           }
         },
         child: Scaffold(
@@ -97,6 +101,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         onPageChanged: (index) {
                           setState(() {
                             playVideo(listOfQuestion[index].video);
+                            indexList.clear();
                           });
                         },
                         itemCount: listOfQuestion.length,
@@ -207,9 +212,13 @@ class _PlayTimePageState extends State<PlayTimePage> {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true, isCompleted: indexList.length == 2 ? true : false));
     } else {
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
     }
   }
 
@@ -220,30 +229,40 @@ class _PlayTimePageState extends State<PlayTimePage> {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: true));
     } else {
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
     }
   }
 
@@ -254,30 +273,40 @@ class _PlayTimePageState extends State<PlayTimePage> {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: true));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: true, isCompleted: true));
     } else {
-      context.read<QuestionBloc>().add(SubmitAnswer(isCorrect: false));
+      context
+          .read<QuestionBloc>()
+          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
     }
   }
 }

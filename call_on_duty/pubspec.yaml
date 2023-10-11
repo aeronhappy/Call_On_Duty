@@ -39,6 +39,7 @@ dependencies:
   dio:
   get_it:
   internet_connection_checker:
+  flutter_native_splash: ^2.3.2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,7 +53,21 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/cross.png"
+  color: "#FF9B9B"
+
+flutter_native_splash:
+  color: "#FF9B9B"
+  image: assets/icon/cross.png
+
+  android_12:
+    color: "#FF9B9B"
+    image: assets/icon/cross.png
     
 
   # The "flutter_lints" package below contains a set of recommended lints to

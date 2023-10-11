@@ -17,123 +17,160 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int currentIndex = 0;
+  bool isOpenPrivacy = false;
   PageController pageController = PageController(initialPage: 0);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primaryColor,
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) => QuestionBloc(
-                                questionRepository: sl(),
-                                networkInfoServices: sl()),
-                          ),
-                        ],
-                        child: const GameModePage(),
-                      );
-                    },
-                  ),
-                );
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Center(
-                  child: Text(
-                    'PLAY',
-                    style: titleText(16, FontWeight.bold, Colors.white),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) => QuestionBloc(
-                                questionRepository: sl(),
-                                networkInfoServices: sl()),
-                          ),
-                        ],
-                        child: const InforamtionPage(),
-                      );
-                    },
-                  ),
-                );
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Center(
-                  child: Text(
-                    'HOW TO PLAY',
-                    style: titleText(16, FontWeight.bold, Colors.white),
+    return Stack(
+      children: [
+        Container(
+            height: MediaQuery.of(context).size.height,
+            child: Image.asset(
+              'assets/icon/splash_screen.png',
+              fit: BoxFit.cover,
+            )),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => QuestionBloc(
+                                    questionRepository: sl(),
+                                    networkInfoServices: sl()),
+                              ),
+                            ],
+                            child: const GameModePage(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                      child: Text(
+                        'PLAY',
+                        style: titleText(16, FontWeight.bold, Colors.white),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) => QuestionBloc(
-                                questionRepository: sl(),
-                                networkInfoServices: sl()),
-                          ),
-                        ],
-                        child: const SettingsPage(),
-                      );
-                    },
-                  ),
-                );
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Center(
-                  child: Text(
-                    'SETTINGS',
-                    style: titleText(16, FontWeight.bold, Colors.white),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => QuestionBloc(
+                                    questionRepository: sl(),
+                                    networkInfoServices: sl()),
+                              ),
+                            ],
+                            child: const InforamtionPage(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                      child: Text(
+                        'HOW TO PLAY',
+                        style: titleText(16, FontWeight.bold, Colors.white),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => QuestionBloc(
+                                    questionRepository: sl(),
+                                    networkInfoServices: sl()),
+                              ),
+                            ],
+                            child: const SettingsPage(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                      child: Text(
+                        'SETTINGS',
+                        style: titleText(16, FontWeight.bold, Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
             ),
-            const SizedBox(height: 10),
-          ],
+          ),
         ),
-      ),
+        AnimatedPositioned(
+          duration: Duration(microseconds: 500),
+          top: 40,
+          right: 20,
+          child: Material(
+            elevation: 5,
+            borderRadius: BorderRadius.circular(100),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(100),
+              onTap: () {
+                setState(() {
+                  isOpenPrivacy = !isOpenPrivacy;
+                });
+              },
+              child: AnimatedContainer(
+                duration: Duration(microseconds: 500),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    color: secondaryColor,
+                    borderRadius: BorderRadius.circular(100)),
+                child: Icon(Icons.question_mark_rounded, color: Colors.white),
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }

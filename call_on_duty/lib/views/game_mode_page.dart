@@ -6,6 +6,7 @@ import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:call_on_duty/views/play_time_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameModePage extends StatefulWidget {
   const GameModePage({super.key});
@@ -16,6 +17,14 @@ class GameModePage extends StatefulWidget {
 
 class _GameModePageState extends State<GameModePage> {
   List<QuestionDifficulty> gameModes = [];
+  bool isModerateModeOpen = false;
+  bool isSevereModeOpen = false;
+
+  getModeOpen() async {
+    var sharedPref = await SharedPreferences.getInstance();
+    isModerateModeOpen = sharedPref.getBool('ModerateMode') ?? false;
+    isSevereModeOpen = sharedPref.getBool('SevereMode') ?? false;
+  }
 
   @override
   void initState() {
@@ -56,37 +65,64 @@ class _GameModePageState extends State<GameModePage> {
                       padding: const EdgeInsets.only(bottom: 5),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(
-                                      create: (context) => QuestionBloc(
-                                          questionRepository: sl(),
-                                          networkInfoServices: sl()),
-                                    ),
-                                  ],
-                                  child: PlayTimePage(
-                                      questionDifficulty: gameModes[index]),
-                                );
-                              },
-                            ),
-                          );
+                          gameModeConverter(gameModes[index],
+                                  isModerateModeOpen, isSevereModeOpen)
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider(
+                                            create: (context) => QuestionBloc(
+                                                questionRepository: sl(),
+                                                networkInfoServices: sl()),
+                                          ),
+                                        ],
+                                        child: PlayTimePage(
+                                            questionDifficulty:
+                                                gameModes[index]),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : null;
                         },
                         child: Container(
                           height: 50,
-                          decoration: const ShapeDecoration(
-                              color: Colors.white,
+                          decoration: ShapeDecoration(
+                              color: gameModeConverter(gameModes[index],
+                                      isModerateModeOpen, isSevereModeOpen)
+                                  ? Colors.white
+                                  : Colors.grey,
                               shape: StadiumBorder(side: BorderSide())),
-                          child: Center(
-                            child: Text(
-                              gameModes[index].name.toUpperCase(),
-                              style:
-                                  bodyText(18, FontWeight.w500, secondaryColor)
-                                      .copyWith(),
-                            ),
+                          child: Stack(
+                            children: [
+                              gameModeConverter(gameModes[index],
+                                      isModerateModeOpen, isSevereModeOpen)
+                                  ? Container()
+                                  : Positioned(
+                                      top: 0,
+                                      bottom: 0,
+                                      left: 5,
+                                      child: CircleAvatar(
+                                          child: Icon(Icons.lock))),
+                              Center(
+                                child: Text(
+                                  gameModes[index].name.toUpperCase(),
+                                  style: bodyText(
+                                      18,
+                                      FontWeight.w500,
+                                      secondaryColor.withOpacity(
+                                          gameModeConverter(
+                                                  gameModes[index],
+                                                  isModerateModeOpen,
+                                                  isSevereModeOpen)
+                                              ? 1
+                                              : .3)),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -102,11 +138,13 @@ class _GameModePageState extends State<GameModePage> {
   }
 }
 
-// String gameModeConverter(QuestionDifficulty questionDifficulty) {
-//   if (questionDifficulty == QuestionDifficulty.mild) {
-//     return 'Mild';
-//   }
-//   if(questionDifficulty == QuestionDifficulty.moderate){
-//     return ''
-//   }
-// }
+bool gameModeConverter(QuestionDifficulty questionDifficulty,
+    bool isModerateModeOpen, bool isSevereModeOpen) {
+  if (QuestionDifficulty.moderate == questionDifficulty) {
+    return isModerateModeOpen ? true : false;
+  }
+  if (QuestionDifficulty.severe == questionDifficulty) {
+    return isSevereModeOpen ? true : false;
+  }
+  return true;
+}

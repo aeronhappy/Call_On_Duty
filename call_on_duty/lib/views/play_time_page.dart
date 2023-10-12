@@ -90,116 +90,101 @@ class _PlayTimePageState extends State<PlayTimePage> {
             body: Stack(
           children: [
             VideoPlayer(videoPlayerController),
-            isDone
-                ? Container(
-                    color: transparentBlackColor,
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    child: PageView.builder(
-                        controller: pageController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        onPageChanged: (index) {
-                          setState(() {
-                            playVideo(listOfQuestion[index].video);
-                            indexList.clear();
-                          });
-                        },
-                        itemCount: listOfQuestion.length,
-                        itemBuilder: (context, questionIndex) {
-                          return Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Center(
-                                  child: GridView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20),
-                                      gridDelegate:
-                                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                                              maxCrossAxisExtent: 220,
-                                              childAspectRatio: 1.3,
-                                              crossAxisSpacing: 20,
-                                              mainAxisSpacing: 20),
-                                      itemCount: listOfQuestion[questionIndex]
-                                          .choices
-                                          .length,
-                                      itemBuilder: (context, answerIndex) {
-                                        return indexList.contains(answerIndex)
-                                            ? Container()
-                                            : AnimatedContainer(
-                                                duration: const Duration(
-                                                    milliseconds: 5000),
-                                                curve: Curves.bounceIn,
-                                                child: InkWell(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          100),
-                                                  onTap: () {
-                                                    if (QuestionDifficulty
-                                                            .mild ==
-                                                        widget
-                                                            .questionDifficulty) {
-                                                      mildSubmitAnswer(
-                                                          questionIndex,
-                                                          answerIndex);
-                                                    }
-                                                    if (QuestionDifficulty
-                                                            .moderate ==
-                                                        widget
-                                                            .questionDifficulty) {
-                                                      moderateSubmitAnswer(
-                                                          questionIndex,
-                                                          answerIndex);
-                                                    }
-                                                    if (QuestionDifficulty
-                                                            .severe ==
-                                                        widget
-                                                            .questionDifficulty) {
-                                                      severeSubmitAnswer(
-                                                          questionIndex,
-                                                          answerIndex);
-                                                    }
-                                                  },
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child: CircleAvatar(
-                                                      child: Text(
-                                                        listOfQuestion[
-                                                                questionIndex]
-                                                            .choices[
-                                                                answerIndex]
-                                                            .value,
-                                                        style: titleText(
-                                                            16,
-                                                            FontWeight.w500,
-                                                            Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                      })));
-                        }),
-                  )
-                : Container(),
+            Center(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 100),
+                curve: Curves.bounceInOut,
+                color: transparentBlackColor,
+                height: isDone ? MediaQuery.of(context).size.height : 0,
+                width: isDone ? MediaQuery.of(context).size.width : 0,
+                child: PageView.builder(
+                    controller: pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() {
+                        playVideo(listOfQuestion[index].video);
+                        indexList.clear();
+                      });
+                    },
+                    itemCount: listOfQuestion.length,
+                    itemBuilder: (context, questionIndex) {
+                      return Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Center(
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 220,
+                                          childAspectRatio: 1.3,
+                                          crossAxisSpacing: 20,
+                                          mainAxisSpacing: 20),
+                                  itemCount: listOfQuestion[questionIndex]
+                                      .choices
+                                      .length,
+                                  itemBuilder: (context, answerIndex) {
+                                    return InkWell(
+                                      borderRadius: BorderRadius.circular(100),
+                                      onTap: () {
+                                        if (QuestionDifficulty.mild ==
+                                            widget.questionDifficulty) {
+                                          mildSubmitAnswer(
+                                              questionIndex, answerIndex);
+                                        }
+                                        if (QuestionDifficulty.moderate ==
+                                            widget.questionDifficulty) {
+                                          moderateSubmitAnswer(
+                                              questionIndex, answerIndex);
+                                        }
+                                        if (QuestionDifficulty.severe ==
+                                            widget.questionDifficulty) {
+                                          severeSubmitAnswer(
+                                              questionIndex, answerIndex);
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: CircleAvatar(
+                                          radius: 20,
+                                          child: Text(
+                                            listOfQuestion[questionIndex]
+                                                .choices[answerIndex]
+                                                .value,
+                                            style: titleText(16,
+                                                FontWeight.w500, Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  })));
+                    }),
+              ),
+            ),
             Positioned(
               top: 40,
               left: 20,
               child: Material(
                   borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          color: secondaryColor,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Text(
-                        widget.questionDifficulty.name.toUpperCase(),
-                        style: titleText(20, FontWeight.bold, Colors.white),
-                      ))),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        isDone = !isDone;
+                      });
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: secondaryColor,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Text(
+                          widget.questionDifficulty.name.toUpperCase(),
+                          style: titleText(20, FontWeight.bold, Colors.white),
+                        )),
+                  )),
             ),
           ],
         )));

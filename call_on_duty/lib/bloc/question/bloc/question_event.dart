@@ -16,3 +16,5 @@ class SubmitAnswer extends QuestionEvent {
 }
 
 class ClickNextPage extends QuestionEvent {}
+
+class ScenarioEnded extends QuestionEvent {}

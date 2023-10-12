@@ -60,5 +60,13 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         emit(FailedQuestion(error: e.toString()));
       }
     });
+
+    on<ScenarioEnded>((event, emit) async {
+      try {
+        emit(LevelDone());
+      } catch (e) {
+        emit(FailedQuestion(error: e.toString()));
+      }
+    });
   }
 }

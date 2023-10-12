@@ -32,3 +32,5 @@ class CorrectAnswer extends QuestionState {
   final bool isCompleted;
   CorrectAnswer({required this.isCompleted});
 }
+
+class LevelDone extends QuestionState {}

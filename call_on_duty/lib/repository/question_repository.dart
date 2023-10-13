@@ -65,17 +65,53 @@ class QuestionRepository implements IQuestionRepository {
       id: 'q2',
       text: 'Anong gamot ang dapat niyang gamitin? ',
       difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/moderate_1.mp4',
+      video: 'assets/video/mild_2.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
         const AnswerModel(
-            id: 'a1', value: 'Yosi', image: 'assets/icon/alcohol.png'),
+            id: 'a1', value: 'rest', image: 'assets/icon/alcohol.png'),
         const AnswerModel(
-            id: 'a2', value: 'Weeds', image: 'assets/icon/betadine.png'),
+            id: 'a2', value: 'ice packs', image: 'assets/icon/betadine.png'),
         const AnswerModel(
-            id: 'a3', value: 'Alak', image: 'assets/icon/water.png'),
+            id: 'a3', value: 'dance', image: 'assets/icon/water.png'),
         const AnswerModel(
-            id: 'a4', value: 'Turon', image: 'assets/icon/dahon.png'),
+            id: 'a4', value: 'cry', image: 'assets/icon/dahon.png'),
+      ],
+    ),
+    QuestionModel(
+      id: 'q3',
+      text: 'Anong gamot ang dapat niyang gamitin? ',
+      difficulty: QuestionDifficulty.mild,
+      video: 'assets/video/mild_3.mp4',
+      answersId: ['a1', 'a2'],
+      choices: <AnswerModel>[
+        const AnswerModel(
+            id: 'a1',
+            value: 'water and soap',
+            image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'squeeze hand', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'towel', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'ice', image: 'assets/icon/dahon.png'),
+      ],
+    ),
+    QuestionModel(
+      id: 'q4',
+      text: 'Anong gamot ang dapat niyang gamitin? ',
+      difficulty: QuestionDifficulty.mild,
+      video: 'assets/video/mild_4.mp4',
+      answersId: ['a1', 'a2'],
+      choices: <AnswerModel>[
+        const AnswerModel(
+            id: 'a1', value: 'inhalers', image: 'assets/icon/alcohol.png'),
+        const AnswerModel(
+            id: 'a2', value: 'chair', image: 'assets/icon/betadine.png'),
+        const AnswerModel(
+            id: 'a3', value: 'running', image: 'assets/icon/water.png'),
+        const AnswerModel(
+            id: 'a4', value: 'swimming', image: 'assets/icon/dahon.png'),
       ],
     ),
 

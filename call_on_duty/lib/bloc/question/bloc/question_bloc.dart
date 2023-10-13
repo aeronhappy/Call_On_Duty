@@ -40,11 +40,11 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       try {
         playEffect(event.isCorrect);
         if (event.isCorrect) {
-          await Future.delayed(const Duration(milliseconds: 1000), () {
+          await Future.delayed(const Duration(milliseconds: 500), () {
             emit(CorrectAnswer(isCompleted: event.isCompleted));
           });
         } else {
-          await Future.delayed(const Duration(milliseconds: 1000), () {
+          await Future.delayed(const Duration(milliseconds: 500), () {
             emit(WrongAnswer());
           });
         }

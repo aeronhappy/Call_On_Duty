@@ -83,7 +83,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
           }
           if (state is NextPage) {
             pageController.nextPage(
-                duration: Duration(milliseconds: 300), curve: Curves.bounceIn);
+                duration: Duration(milliseconds: 2000), curve: Curves.bounceIn);
           }
         },
         child: Scaffold(
@@ -145,8 +145,11 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                               questionIndex, answerIndex);
                                         }
                                       },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
+                                      child: AnimatedOpacity(
+                                        opacity: indexList.contains(answerIndex)
+                                            ? 0
+                                            : 1,
+                                        duration: Duration(milliseconds: 500),
                                         child: CircleAvatar(
                                           radius: 20,
                                           child: Text(

@@ -30,6 +30,7 @@ class _GameModePageState extends State<GameModePage> {
   void initState() {
     super.initState();
     context.read<QuestionBloc>().add(GetGameMode());
+    getModeOpen();
   }
 
   @override
@@ -64,12 +65,13 @@ class _GameModePageState extends State<GameModePage> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 5),
                       child: InkWell(
-                        onTap: () {
-                          gameModeConverter(gameModes[index],
-                                  isModerateModeOpen, isSevereModeOpen)
-                              ? Navigator.push(
+                        onTap: gameModeConverter(gameModes[index],
+                                isModerateModeOpen, isSevereModeOpen)
+                            ? () async {
+                                bool isRefresh = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
+                                    maintainState: false,
                                     builder: (context) {
                                       return MultiBlocProvider(
                                         providers: [
@@ -85,9 +87,15 @@ class _GameModePageState extends State<GameModePage> {
                                       );
                                     },
                                   ),
-                                )
-                              : null;
-                        },
+                                );
+
+                                if (isRefresh) {
+                                  setState(() {
+                                    getModeOpen();
+                                  });
+                                }
+                              }
+                            : null,
                         child: Container(
                           height: 50,
                           decoration: ShapeDecoration(

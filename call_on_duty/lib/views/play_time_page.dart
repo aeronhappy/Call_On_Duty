@@ -8,6 +8,7 @@ import 'package:call_on_duty/widgets/correct_answer_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayTimePage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   bool isDone = false;
   List<QuestionModel> listOfQuestion = [];
   List<int> indexList = [];
+  int indexCount = 1;
 
   @override
   void initState() {
@@ -65,6 +67,17 @@ class _PlayTimePageState extends State<PlayTimePage> {
     });
   }
 
+  void unlockNextLevel(QuestionDifficulty questionDifficulty) async {
+    var sharedPref = await SharedPreferences.getInstance();
+
+    if (QuestionDifficulty.mild == questionDifficulty) {
+      sharedPref.setBool('ModerateMode', true);
+    }
+    if (QuestionDifficulty.moderate == questionDifficulty) {
+      sharedPref.setBool('SevereMode', true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<QuestionBloc, QuestionState>(
@@ -82,8 +95,17 @@ class _PlayTimePageState extends State<PlayTimePage> {
             wrongAnswerDialog(context);
           }
           if (state is NextPage) {
-            pageController.nextPage(
-                duration: Duration(milliseconds: 2000), curve: Curves.bounceIn);
+            setState(() {
+              isDone = false;
+            });
+            if (indexCount == listOfQuestion.length) {
+              unlockNextLevel(widget.questionDifficulty);
+              Navigator.pop(context, true);
+            } else {
+              pageController.nextPage(
+                  duration: Duration(milliseconds: 2000),
+                  curve: Curves.bounceIn);
+            }
           }
         },
         child: Scaffold(
@@ -91,79 +113,92 @@ class _PlayTimePageState extends State<PlayTimePage> {
           children: [
             VideoPlayer(videoPlayerController),
             Center(
-              child: AnimatedContainer(
+              child: AnimatedOpacity(
                 duration: Duration(milliseconds: 100),
                 curve: Curves.bounceInOut,
-                color: transparentBlackColor,
-                height: isDone ? MediaQuery.of(context).size.height : 0,
-                width: isDone ? MediaQuery.of(context).size.width : 0,
-                child: PageView.builder(
-                    controller: pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (index) {
-                      setState(() {
-                        playVideo(listOfQuestion[index].video);
-                        indexList.clear();
-                      });
-                    },
-                    itemCount: listOfQuestion.length,
-                    itemBuilder: (context, questionIndex) {
-                      return Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Center(
-                              child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 220,
-                                          childAspectRatio: 1.3,
-                                          crossAxisSpacing: 20,
-                                          mainAxisSpacing: 20),
-                                  itemCount: listOfQuestion[questionIndex]
-                                      .choices
-                                      .length,
-                                  itemBuilder: (context, answerIndex) {
-                                    return InkWell(
-                                      borderRadius: BorderRadius.circular(100),
-                                      onTap: () {
-                                        if (QuestionDifficulty.mild ==
-                                            widget.questionDifficulty) {
-                                          mildSubmitAnswer(
-                                              questionIndex, answerIndex);
-                                        }
-                                        if (QuestionDifficulty.moderate ==
-                                            widget.questionDifficulty) {
-                                          moderateSubmitAnswer(
-                                              questionIndex, answerIndex);
-                                        }
-                                        if (QuestionDifficulty.severe ==
-                                            widget.questionDifficulty) {
-                                          severeSubmitAnswer(
-                                              questionIndex, answerIndex);
-                                        }
-                                      },
-                                      child: AnimatedOpacity(
-                                        opacity: indexList.contains(answerIndex)
-                                            ? 0
-                                            : 1,
-                                        duration: Duration(milliseconds: 500),
-                                        child: CircleAvatar(
-                                          radius: 20,
-                                          child: Text(
-                                            listOfQuestion[questionIndex]
-                                                .choices[answerIndex]
-                                                .value,
-                                            style: titleText(16,
-                                                FontWeight.w500, Colors.white),
+                opacity: isDone ? 1 : 0,
+                child: Container(
+                  color: transparentBlackColor,
+                  child: PageView.builder(
+                      controller: pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      onPageChanged: (index) {
+                        setState(() {
+                          playVideo(listOfQuestion[index].video);
+                          indexList.clear();
+                          indexCount++;
+                        });
+                      },
+                      itemCount: listOfQuestion.length,
+                      itemBuilder: (context, questionIndex) {
+                        return Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Center(
+                                child: GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent: 220,
+                                            childAspectRatio: 1.3,
+                                            crossAxisSpacing: 20,
+                                            mainAxisSpacing: 20),
+                                    itemCount: listOfQuestion[questionIndex]
+                                        .choices
+                                        .length,
+                                    itemBuilder: (context, answerIndex) {
+                                      return InkWell(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        onTap: isDone
+                                            ? () {
+                                                if (QuestionDifficulty.mild ==
+                                                    widget.questionDifficulty) {
+                                                  mildSubmitAnswer(
+                                                      questionIndex,
+                                                      answerIndex);
+                                                }
+                                                if (QuestionDifficulty
+                                                        .moderate ==
+                                                    widget.questionDifficulty) {
+                                                  moderateSubmitAnswer(
+                                                      questionIndex,
+                                                      answerIndex);
+                                                }
+                                                if (QuestionDifficulty.severe ==
+                                                    widget.questionDifficulty) {
+                                                  severeSubmitAnswer(
+                                                      questionIndex,
+                                                      answerIndex);
+                                                }
+                                              }
+                                            : null,
+                                        child: AnimatedOpacity(
+                                          opacity:
+                                              indexList.contains(answerIndex)
+                                                  ? 0
+                                                  : 1,
+                                          duration: Duration(milliseconds: 500),
+                                          child: CircleAvatar(
+                                            radius: 20,
+                                            child: Text(
+                                              listOfQuestion[questionIndex]
+                                                  .choices[answerIndex]
+                                                  .value,
+                                              style: titleText(
+                                                  16,
+                                                  FontWeight.w500,
+                                                  Colors.white),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  })));
-                    }),
+                                      );
+                                    })));
+                      }),
+                ),
               ),
             ),
             Positioned(

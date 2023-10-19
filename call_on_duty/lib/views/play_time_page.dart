@@ -116,6 +116,9 @@ class _PlayTimePageState extends State<PlayTimePage> {
         child: Scaffold(
             body: Stack(
           children: [
+            Center(
+              child: CircularProgressIndicator(),
+            ),
             VideoPlayer(videoPlayerController),
             Center(
               child: AnimatedOpacity(

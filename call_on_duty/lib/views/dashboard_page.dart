@@ -58,6 +58,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
+                        maintainState: false,
                         builder: (context) {
                           return MultiBlocProvider(
                             providers: [
@@ -155,6 +156,23 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                InkWell(
+                  onTap: () {
+                    exit(0);
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                      child: Text(
+                        'QUIT',
+                        style: titleText(16, FontWeight.bold, Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

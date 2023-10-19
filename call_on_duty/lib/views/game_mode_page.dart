@@ -65,37 +65,58 @@ class _GameModePageState extends State<GameModePage> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 5),
                       child: InkWell(
-                        onTap: gameModeConverter(gameModes[index],
-                                isModerateModeOpen, isSevereModeOpen)
-                            ? () async {
-                                bool isRefresh = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    maintainState: false,
-                                    builder: (context) {
-                                      return MultiBlocProvider(
-                                        providers: [
-                                          BlocProvider(
-                                            create: (context) => QuestionBloc(
-                                                questionRepository: sl(),
-                                                networkInfoServices: sl()),
-                                          ),
-                                        ],
-                                        child: PlayTimePage(
-                                            questionDifficulty:
-                                                gameModes[index]),
-                                      );
-                                    },
-                                  ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              maintainState: false,
+                              builder: (context) {
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider(
+                                      create: (context) => QuestionBloc(
+                                          questionRepository: sl(),
+                                          networkInfoServices: sl()),
+                                    ),
+                                  ],
+                                  child: PlayTimePage(
+                                      questionDifficulty: gameModes[index]),
                                 );
+                              },
+                            ),
+                          );
+                        },
+                        // onTap: gameModeConverter(gameModes[index],
+                        //         isModerateModeOpen, isSevereModeOpen)
+                        //     ? () async {
+                        //         bool isRefresh = await Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //             maintainState: false,
+                        //             builder: (context) {
+                        //               return MultiBlocProvider(
+                        //                 providers: [
+                        //                   BlocProvider(
+                        //                     create: (context) => QuestionBloc(
+                        //                         questionRepository: sl(),
+                        //                         networkInfoServices: sl()),
+                        //                   ),
+                        //                 ],
+                        //                 child: PlayTimePage(
+                        //                     questionDifficulty:
+                        //                         gameModes[index]),
+                        //               );
+                        //             },
+                        //           ),
+                        //         );
 
-                                if (isRefresh) {
-                                  setState(() {
-                                    getModeOpen();
-                                  });
-                                }
-                              }
-                            : null,
+                        //         if (isRefresh) {
+                        //           setState(() {
+                        //             getModeOpen();
+                        //           });
+                        //         }
+                        //       }
+                        //     : null,
                         child: Container(
                           height: 50,
                           decoration: ShapeDecoration(

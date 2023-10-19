@@ -5,10 +5,10 @@ import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:call_on_duty/widgets/correct_answer_popup.dart';
+import 'package:call_on_duty/widgets/unlock_level_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayTimePage extends StatefulWidget {
@@ -26,6 +26,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   List<QuestionModel> listOfQuestion = [];
   List<int> indexList = [];
   int indexCount = 1;
+  bool isBloodyDone = false;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
     videoPlayerController = VideoPlayerController.asset('');
+    textToSpeech(bloodySpeech(widget.questionDifficulty));
   }
 
   @override
@@ -63,19 +65,23 @@ class _PlayTimePageState extends State<PlayTimePage> {
         });
       });
       videoPlayerController.initialize().then((_) => setState(() {}));
-      videoPlayerController.play();
+      if (isBloodyDone) {
+        videoPlayerController.play();
+      }
     });
   }
 
-  void unlockNextLevel(QuestionDifficulty questionDifficulty) async {
-    var sharedPref = await SharedPreferences.getInstance();
-
+  String bloodySpeech(QuestionDifficulty questionDifficulty) {
     if (QuestionDifficulty.mild == questionDifficulty) {
-      sharedPref.setBool('ModerateMode', true);
+      return 'Ang Mild Mode ay laro kung saan may mapapanood kang video at pipili ka lamang ng dalawang tamang sagot ayon sa kelangan ng tao sa video.';
     }
     if (QuestionDifficulty.moderate == questionDifficulty) {
-      sharedPref.setBool('SevereMode', true);
+      return 'Ang Moderate Mode ay may apat na pamimilian. Lahat ng ito ay tamang sagot, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
     }
+    if (QuestionDifficulty.severe == questionDifficulty) {
+      return 'Ang Severe Mode ay may anim na pamimilian. Apat ang tama at dalawa ang mali, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
+    }
+    return '';
   }
 
   @override
@@ -99,8 +105,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
               isDone = false;
             });
             if (indexCount == listOfQuestion.length) {
-              unlockNextLevel(widget.questionDifficulty);
-              Navigator.pop(context, true);
+              unlockLevelDialog(context, widget.questionDifficulty);
             } else {
               pageController.nextPage(
                   duration: Duration(milliseconds: 2000),
@@ -205,12 +210,11 @@ class _PlayTimePageState extends State<PlayTimePage> {
               top: 40,
               left: 20,
               child: Material(
+                  elevation: 10,
                   borderRadius: BorderRadius.circular(8),
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        isDone = !isDone;
-                      });
+                      // unlockLevelDialog(context);
                     },
                     child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -224,6 +228,47 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         )),
                   )),
             ),
+            isBloodyDone
+                ? Container()
+                : AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: isBloodyDone ? 0 : 1,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          speechStop();
+                          isBloodyDone = true;
+                          videoPlayerController.play();
+                        });
+                      },
+                      child: Container(
+                        color: transparentBlackColor,
+                        child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 20),
+                              Container(
+                                  margin: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Text(
+                                    bloodySpeech(widget.questionDifficulty),
+                                    style: bodyText(
+                                        18, FontWeight.w500, Colors.black),
+                                  )),
+                              Image.asset('assets/icon/bloody.png'),
+                              Text(
+                                'Tap to continue',
+                                style: bodyText(
+                                    12, FontWeight.w300, Colors.white38),
+                              )
+                            ]),
+                      ),
+                    ),
+                  )
           ],
         )));
   }

@@ -40,15 +40,18 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 100, width: double.infinity),
-            Text(
-              'SETTINGS',
-              textAlign: TextAlign.center,
-              style: titleText(24, FontWeight.bold, Colors.white),
+            Hero(
+              tag: 'settings-tag',
+              child: Text(
+                'SETTINGS',
+                textAlign: TextAlign.center,
+                style: titleText(24, FontWeight.bold, Colors.white),
+              ),
             ),
             Row(
               children: [

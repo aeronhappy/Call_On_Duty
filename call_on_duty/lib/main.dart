@@ -1,5 +1,4 @@
 import 'package:call_on_duty/views/dashboard_page.dart';
-import 'package:call_on_duty/views/example.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';

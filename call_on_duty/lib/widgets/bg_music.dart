@@ -14,10 +14,15 @@ List<String> bgList = <String>[
 
 textToSpeech(String text) async {
   playMusicLowVolume();
-  await flutterTts.setVoice({"name": "Karen", "locale": "en-AU"});
+  // var voices = await flutterTts.getVoices;
+  // for (var voice in voices) {
+  //   if (voice["locale"] == "fil-PH") {
+  //     print(voice["name"]);
+  //   }
+  // }
+  await flutterTts.setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
   await flutterTts.setSpeechRate(.5);
-  await flutterTts.setVolume(1);
-  await flutterTts.setPitch(.9);
+  await flutterTts.setPitch(.7);
   await flutterTts.speak(text);
   await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
     playMusic();
@@ -33,7 +38,7 @@ playMusic() async {
   bool isMusicOn = sharedPref.getBool('isMusicOn') ?? true;
 
   if (isMusicOn) {
-    bgAudioPlayer.loop('bg_music/bg_1.mp3', volume: .5);
+    bgAudioPlayer.loop('bg_music/bg_1.mp3', volume: .3);
   }
 }
 

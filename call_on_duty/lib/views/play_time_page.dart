@@ -22,11 +22,13 @@ class PlayTimePage extends StatefulWidget {
 class _PlayTimePageState extends State<PlayTimePage> {
   PageController pageController = PageController();
   late VideoPlayerController videoPlayerController;
+  late VideoPlayerController vControllerCorrectAnswer;
   bool isDone = false;
   List<QuestionModel> listOfQuestion = [];
   List<int> indexList = [];
   int indexCount = 1;
   bool isBloodyDone = false;
+  bool isTutorialOpen = false;
 
   @override
   void initState() {
@@ -35,6 +37,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
     videoPlayerController = VideoPlayerController.asset('');
+    vControllerCorrectAnswer = VideoPlayerController.asset('');
     textToSpeech(bloodySpeech(widget.questionDifficulty));
   }
 
@@ -42,6 +45,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   void dispose() {
     super.dispose();
     videoPlayerController.dispose();
+    vControllerCorrectAnswer.dispose();
   }
 
   void playVideo(String videoInQuestion) {
@@ -68,6 +72,31 @@ class _PlayTimePageState extends State<PlayTimePage> {
       if (isBloodyDone) {
         videoPlayerController.play();
       }
+    });
+  }
+
+  void playVideoWithCorrect(String videoInAnswer) {
+    setState(() {
+      vControllerCorrectAnswer = VideoPlayerController.asset(videoInAnswer);
+      vControllerCorrectAnswer.addListener(() {
+        setState(() {
+          if (vControllerCorrectAnswer.value.duration != Duration.zero) {
+            if (vControllerCorrectAnswer.value.position ==
+                vControllerCorrectAnswer.value.duration) {
+              isTutorialOpen = false;
+              playMusic();
+            } else {
+              isTutorialOpen = true;
+              playMusicLowVolume();
+            }
+          } else {
+            isTutorialOpen = true;
+            playMusicLowVolume();
+          }
+        });
+      });
+      vControllerCorrectAnswer.initialize().then((_) => setState(() {}));
+      vControllerCorrectAnswer.play();
     });
   }
 
@@ -170,14 +199,26 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                                 Duration(milliseconds: 500),
                                             child: CircleAvatar(
                                               radius: 50,
-                                              child: Text(
-                                                listOfQuestion[questionIndex]
-                                                    .choices[answerIndex]
-                                                    .value,
-                                                style: titleText(
-                                                    16,
-                                                    FontWeight.w500,
-                                                    Colors.white),
+                                              child: Column(
+                                                children: [
+                                                  Image.asset(
+                                                    listOfQuestion[
+                                                            questionIndex]
+                                                        .choices[answerIndex]
+                                                        .image,
+                                                    height: 100,
+                                                  ),
+                                                  Text(
+                                                    listOfQuestion[
+                                                            questionIndex]
+                                                        .choices[answerIndex]
+                                                        .value,
+                                                    style: titleText(
+                                                        16,
+                                                        FontWeight.w500,
+                                                        Colors.white),
+                                                  ),
+                                                ],
                                               ),
                                             )),
                                         feedback: CircleAvatar(
@@ -242,6 +283,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
                 ),
               ),
             ),
+            AnimatedContainer(
+                height: isTutorialOpen ? MediaQuery.of(context).size.height : 0,
+                duration: Duration(milliseconds: 500),
+                child: VideoPlayer(vControllerCorrectAnswer)),
             Positioned(
               top: 40,
               left: 20,
@@ -277,29 +322,39 @@ class _PlayTimePageState extends State<PlayTimePage> {
                       },
                       child: Container(
                         color: transparentBlackColor,
-                        child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 20),
-                              Container(
-                                  margin: EdgeInsets.all(20),
-                                  padding: EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: Text(
-                                    bloodySpeech(widget.questionDifficulty),
-                                    style: bodyText(
-                                        18, FontWeight.w500, Colors.black),
-                                  )),
-                              Image.asset('assets/icon/bloody.png'),
-                              Text(
-                                'Tap to continue',
-                                style: bodyText(
-                                    12, FontWeight.w300, Colors.white38),
-                              )
-                            ]),
+                        height: double.infinity,
+                        child: Stack(children: [
+                          Center(
+                            child: Container(
+                                margin: EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      bloodySpeech(widget.questionDifficulty),
+                                      style: bodyText(
+                                          18, FontWeight.w500, Colors.black),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Tap to continue",
+                                      style: bodyText(
+                                          12, FontWeight.w400, Colors.black),
+                                    )
+                                  ],
+                                )),
+                          ),
+                          Positioned(
+                              bottom: -100,
+                              child: Image.asset(
+                                'assets/cod/rman.gif',
+                                height: 500,
+                              )),
+                        ]),
                       ),
                     ),
                   )
@@ -317,6 +372,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
 
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true, isCompleted: indexList.length == 2 ? true : false));
+      playVideoWithCorrect(
+          listOfQuestion[questionIndex].choices[answerIndex].video);
     } else {
       context
           .read<QuestionBloc>()

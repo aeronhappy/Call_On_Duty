@@ -14,18 +14,78 @@ class _InforamtionPageState extends State<InforamtionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: secondaryColor,
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 100, width: double.infinity),
-          Text(
-            'HOW TO PLAY ?',
-            textAlign: TextAlign.center,
-            style: titleText(24, FontWeight.bold, Colors.white),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 50, width: double.infinity),
+            Text(
+              'Highscore',
+              textAlign: TextAlign.center,
+              style: titleText(24, FontWeight.bold, Colors.white),
+            ),
+            SizedBox(height: 20),
+            Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Rank",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                  Text("Time",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                  Text("Score",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                ]),
+            SizedBox(height: 20),
+            Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 100,
+                    child: Text("EASY",
+                        style: titleText(18, FontWeight.w500, Colors.white)),
+                  ),
+                  Text("2:48 Sec",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                  Text("55 pts",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                ]),
+            SizedBox(height: 20),
+            Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 100,
+                    child: Text("MEDIUM",
+                        style: titleText(18, FontWeight.w500, Colors.white)),
+                  ),
+                  Text("2:48 Sec",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                  Text("55 pts",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                ]),
+            SizedBox(height: 20),
+            Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 100,
+                    child: Text("HARD",
+                        style: titleText(18, FontWeight.w500, Colors.white)),
+                  ),
+                  Text("2:48 Sec",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                  Text("55 pts",
+                      style: titleText(18, FontWeight.w500, Colors.white)),
+                ]),
+          ],
+        ),
       ),
     );
   }

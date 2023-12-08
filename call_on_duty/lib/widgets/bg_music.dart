@@ -14,12 +14,6 @@ List<String> bgList = <String>[
 
 textToSpeech(String text) async {
   playMusicLowVolume();
-  // var voices = await flutterTts.getVoices;
-  // for (var voice in voices) {
-  //   if (voice["locale"] == "fil-PH") {
-  //     print(voice["name"]);
-  //   }
-  // }
   await flutterTts.setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
   await flutterTts.setSpeechRate(.5);
   await flutterTts.setPitch(.7);

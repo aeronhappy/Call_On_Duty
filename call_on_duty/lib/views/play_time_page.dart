@@ -1,10 +1,10 @@
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
+import 'package:call_on_duty/model/answer_model.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
-import 'package:call_on_duty/widgets/correct_answer_popup.dart';
 import 'package:call_on_duty/widgets/unlock_level_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +23,15 @@ class _PlayTimePageState extends State<PlayTimePage> {
   PageController pageController = PageController();
   late VideoPlayerController videoPlayerController;
   late VideoPlayerController vControllerCorrectAnswer;
+  bool isReadyToAnswer = false;
   bool isDone = false;
   List<QuestionModel> listOfQuestion = [];
+  int questionIndex = 0;
   List<int> indexList = [];
   int indexCount = 1;
   bool isBloodyDone = false;
   bool isTutorialOpen = false;
+  bool isScenarioCompleted = false;
 
   @override
   void initState() {
@@ -48,22 +51,51 @@ class _PlayTimePageState extends State<PlayTimePage> {
     vControllerCorrectAnswer.dispose();
   }
 
-  void playVideo(String videoInQuestion) {
+  speech(QuestionModel question) async {
+    playMusicLowVolume();
+    await flutterTts
+        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
+    await flutterTts.setSpeechRate(.5);
+    await flutterTts.setPitch(.7);
+    await flutterTts.speak(question.text +
+        "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.");
+    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
+      playMusic();
+    });
+  }
+
+  answerSpeech(String text) async {
+    playMusicLowVolume();
+    await flutterTts
+        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
+    await flutterTts.setSpeechRate(.5);
+    await flutterTts.setPitch(.7);
+    await flutterTts.speak(text);
+    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
+      playMusic();
+    });
+  }
+
+  void playVideo(QuestionModel question) {
     setState(() {
-      videoPlayerController = VideoPlayerController.asset(videoInQuestion);
+      videoPlayerController = VideoPlayerController.asset(question.video);
       videoPlayerController.addListener(() {
         setState(() {
           if (videoPlayerController.value.duration != Duration.zero) {
             if (videoPlayerController.value.position ==
                 videoPlayerController.value.duration) {
               isDone = true;
+              isReadyToAnswer = false;
+              speech(question);
               playMusic();
             } else {
               isDone = false;
+              isReadyToAnswer = false;
               playMusicLowVolume();
             }
           } else {
             isDone = false;
+            isReadyToAnswer = false;
             playMusicLowVolume();
           }
         });
@@ -75,16 +107,19 @@ class _PlayTimePageState extends State<PlayTimePage> {
     });
   }
 
-  void playVideoWithCorrect(String videoInAnswer) {
+  void playVideoWithCorrect(AnswerModel answerModel, bool isCompleted) {
     setState(() {
-      vControllerCorrectAnswer = VideoPlayerController.asset(videoInAnswer);
+      vControllerCorrectAnswer = VideoPlayerController.asset(answerModel.video);
       vControllerCorrectAnswer.addListener(() {
         setState(() {
           if (vControllerCorrectAnswer.value.duration != Duration.zero) {
             if (vControllerCorrectAnswer.value.position ==
                 vControllerCorrectAnswer.value.duration) {
               isTutorialOpen = false;
+              isScenarioCompleted = isCompleted;
               playMusic();
+            } else if (vControllerCorrectAnswer.value.position.inSeconds == 1) {
+              answerSpeech(answerModel.explanation);
             } else {
               isTutorialOpen = true;
               playMusicLowVolume();
@@ -120,11 +155,11 @@ class _PlayTimePageState extends State<PlayTimePage> {
           if (state is LoadedRandomQuestions) {
             setState(() {
               listOfQuestion = state.randomQuestions;
-              playVideo(state.randomQuestions[0].video);
             });
+            playVideo(state.randomQuestions[0]);
           }
           if (state is CorrectAnswer) {
-            correctAnswerDialog(context, state.isCompleted);
+            playVideoWithCorrect(state.answerModel, state.isCompleted);
           }
           if (state is WrongAnswer) {
             wrongAnswerDialog(context);
@@ -153,7 +188,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 100),
                 curve: Curves.bounceInOut,
-                opacity: isDone ? 1 : 0,
+                opacity: isReadyToAnswer ? 1 : 0,
                 child: Container(
                   color: transparentBlackColor,
                   child: PageView.builder(
@@ -161,10 +196,12 @@ class _PlayTimePageState extends State<PlayTimePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       onPageChanged: (index) {
                         setState(() {
-                          playVideo(listOfQuestion[index].video);
+                          questionIndex = index;
+                          isReadyToAnswer = false;
                           indexList.clear();
                           indexCount++;
                         });
+                        playVideo(listOfQuestion[index]);
                       },
                       itemCount: listOfQuestion.length,
                       itemBuilder: (context, questionIndex) {
@@ -284,6 +321,113 @@ class _PlayTimePageState extends State<PlayTimePage> {
               ),
             ),
             AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              height: isDone ? MediaQuery.of(context).size.height : 0,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    isDone = false;
+                    isReadyToAnswer = true;
+                  });
+                },
+                child: Container(
+                  color: transparentBlackColor,
+                  height: double.infinity,
+                  child: Stack(children: [
+                    Center(
+                      child: Container(
+                          margin: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                listOfQuestion.isEmpty
+                                    ? "No"
+                                    : listOfQuestion[questionIndex].text,
+                                style:
+                                    bodyText(18, FontWeight.w500, Colors.black),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.",
+                                style:
+                                    bodyText(18, FontWeight.w500, Colors.black),
+                              ),
+                              SizedBox(height: 10),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Text(
+                                  "Tap to continue",
+                                  textAlign: TextAlign.center,
+                                  style: bodyText(
+                                      12, FontWeight.w400, Colors.black),
+                                ),
+                              )
+                            ],
+                          )),
+                    ),
+                    Positioned(
+                        bottom: -200,
+                        left: 50,
+                        child: Image.asset(
+                          'assets/character/rman.gif',
+                          height: 500,
+                        )),
+                  ]),
+                ),
+              ),
+            ),
+            isScenarioCompleted
+                ? Center(
+                    child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Material(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child:
+                              Column(mainAxisSize: MainAxisSize.min, children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: Colors.greenAccent,
+                              size: 80,
+                            ),
+                            SizedBox(height: 50),
+                            InkWell(
+                              onTap: () {
+                                isScenarioCompleted = false;
+                                isReadyToAnswer = false;
+                                context
+                                    .read<QuestionBloc>()
+                                    .add(ClickNextPage());
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 40),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(14)),
+                                child: Center(
+                                  child: Text(
+                                    'Next',
+                                    style: titleText(
+                                        18, FontWeight.bold, Colors.white),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ])),
+                    ),
+                  ))
+                : Container(),
+            AnimatedContainer(
                 height: isTutorialOpen ? MediaQuery.of(context).size.height : 0,
                 duration: Duration(milliseconds: 500),
                 child: VideoPlayer(vControllerCorrectAnswer)),
@@ -349,9 +493,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                 )),
                           ),
                           Positioned(
-                              bottom: -100,
+                              bottom: -150,
+                              left: 50,
                               child: Image.asset(
-                                'assets/cod/rman.gif',
+                                'assets/character/rman.gif',
                                 height: 500,
                               )),
                         ]),
@@ -371,13 +516,14 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
 
       context.read<QuestionBloc>().add(SubmitAnswer(
-          isCorrect: true, isCompleted: indexList.length == 2 ? true : false));
-      playVideoWithCorrect(
-          listOfQuestion[questionIndex].choices[answerIndex].video);
+          isCorrect: true,
+          isCompleted: indexList.length == 2 ? true : false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: false,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }
 
@@ -388,40 +534,45 @@ class _PlayTimePageState extends State<PlayTimePage> {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: true));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: true,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: false,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }
 
@@ -432,40 +583,45 @@ class _PlayTimePageState extends State<PlayTimePage> {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
             listOfQuestion[questionIndex].choices[answerIndex].id) {
       setState(() {
         indexList.add(answerIndex);
       });
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: true, isCompleted: true));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: true,
+          isCompleted: true,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
-      context
-          .read<QuestionBloc>()
-          .add(SubmitAnswer(isCorrect: false, isCompleted: false));
+      context.read<QuestionBloc>().add(SubmitAnswer(
+          isCorrect: false,
+          isCompleted: false,
+          answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }
 }

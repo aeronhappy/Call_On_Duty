@@ -116,7 +116,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         borderRadius: BorderRadius.circular(8)),
                     child: Center(
                       child: Text(
-                        'HOW TO PLAY',
+                        'HIGHSCORE',
                         style: titleText(16, FontWeight.bold, Colors.white),
                       ),
                     ),

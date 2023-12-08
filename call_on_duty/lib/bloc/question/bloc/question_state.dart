@@ -30,7 +30,8 @@ class WrongAnswer extends QuestionState {}
 
 class CorrectAnswer extends QuestionState {
   final bool isCompleted;
-  CorrectAnswer({required this.isCompleted});
+  final AnswerModel answerModel;
+  CorrectAnswer({required this.isCompleted, required this.answerModel});
 }
 
 class LevelDone extends QuestionState {}

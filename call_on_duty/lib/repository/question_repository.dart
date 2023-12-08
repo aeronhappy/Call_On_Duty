@@ -49,28 +49,67 @@ class QuestionRepository implements IQuestionRepository {
       text:
           'Ang hika ay isang talamak na sakit ng daanan ng hangin sa baga. Sa panahon ng atake ng hika, ang mga daanan ng hangin sa baga ay namamaga, makitid at gumagawa ng dagdag na uhog na ginagawang mahirap huminga.',
       difficulty: QuestionDifficulty.mild,
-      video: 'assets/video/ASTHMA.mp4',
+      video: 'assets/video_question/L1_asthma.mp4',
       answersId: ['a1', 'a2'],
       choices: <AnswerModel>[
         const AnswerModel(
             id: 'a1',
             value: 'Rest',
-            image: 'assets/video/BENCH.png',
-            video: 'assets/video/DND_L1_ASTHMA.mp4'),
+            image: 'assets/image_choices/rest.png',
+            explanation:
+                'tulungan ang tao sa isang komportableng posisyon at bigyan siya ng katiyakan.',
+            video: 'assets/video_answer/L1_asthma_1.mp4'),
         const AnswerModel(
             id: 'a2',
-            value: 'INHALER',
-            image: 'assets/video/INHALER.png',
-            video: 'assets/video/DND_L1_ASTHMA_2.mp4'),
+            value: 'Inhaler',
+            image: 'assets/image_choices/inhaler.png',
+            explanation: 'makakatulong ito sa pag papaluwag ng pag hinga.',
+            video: 'assets/video_answer/L1_asthma_2.mp4'),
         const AnswerModel(
             id: 'a3',
             value: 'Dahon',
             image: 'assets/icon/dahon.png',
+            explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a4',
-            value: 'Water',
-            image: 'assets/icon/water.png',
+            value: 'Hot Water',
+            image: 'assets/image_choices/hot_water.png',
+            explanation: '',
+            video: ''),
+      ],
+    ),
+    QuestionModel(
+      id: 'q2',
+      text:
+          'Ang lagnat ay karaniwan at normal na tugon upang labanan ang impeksiyon at kadalasang hindi nakakapinsala. ',
+      difficulty: QuestionDifficulty.mild,
+      video: 'assets/video_question/L1_fever.mp4',
+      answersId: ['a1', 'a2'],
+      choices: <AnswerModel>[
+        const AnswerModel(
+            id: 'a1',
+            value: 'Paracetamol',
+            image: 'assets/image_choices/medicine.png',
+            explanation: 'makakatulomg ito upang mawala ang sakit.',
+            video: 'assets/video_answer/L1_fever_1.mp4'),
+        const AnswerModel(
+            id: 'a2',
+            value: 'Rest',
+            image: 'assets/image_choices/rest.png',
+            explanation: 'makakatulong ito sa pag papaluwag ng pag hinga.',
+            video: 'assets/video_answer/L1_fever_1.mp4'),
+        const AnswerModel(
+            id: 'a3',
+            value: 'Basketball',
+            image: 'assets/icon/dahon.png',
+            explanation: '',
+            video: ''),
+        const AnswerModel(
+            id: 'a4',
+            value: 'Mobile Games',
+            image: 'assets/image_choices/hot_water.png',
+            explanation: '',
             video: ''),
       ],
     ),

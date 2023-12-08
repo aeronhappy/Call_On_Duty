@@ -94,9 +94,11 @@ flutter:
   assets:
     - assets/
     - assets/icon/
-    - assets/video/
+    - assets/video_answer/
+    - assets/video_question/
+    - assets/image_choices/
     - assets/bg_music/
-    - assets/cod/
+    - assets/character/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

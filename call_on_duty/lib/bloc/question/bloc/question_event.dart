@@ -12,7 +12,11 @@ class GetGameMode extends QuestionEvent {}
 class SubmitAnswer extends QuestionEvent {
   final bool isCorrect;
   final bool isCompleted;
-  SubmitAnswer({required this.isCorrect, required this.isCompleted});
+  final AnswerModel answerModel;
+  SubmitAnswer(
+      {required this.isCorrect,
+      required this.isCompleted,
+      required this.answerModel});
 }
 
 class ClickNextPage extends QuestionEvent {}

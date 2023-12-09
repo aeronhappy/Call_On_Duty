@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
@@ -20,6 +22,12 @@ class PlayTimePage extends StatefulWidget {
 }
 
 class _PlayTimePageState extends State<PlayTimePage> {
+  //Timers
+  late Timer timers;
+  int newTimer = 0;
+  String displaytime = '00.00';
+  // bool isPaused = true;
+
   PageController pageController = PageController();
   late VideoPlayerController videoPlayerController;
   late VideoPlayerController vControllerCorrectAnswer;
@@ -42,6 +50,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
     videoPlayerController = VideoPlayerController.asset('');
     vControllerCorrectAnswer = VideoPlayerController.asset('');
     textToSpeech(bloodySpeech(widget.questionDifficulty));
+    timers = Timer.periodic(const Duration(milliseconds: 0), ((timer) {}));
   }
 
   @override
@@ -49,6 +58,19 @@ class _PlayTimePageState extends State<PlayTimePage> {
     super.dispose();
     videoPlayerController.dispose();
     vControllerCorrectAnswer.dispose();
+    timers.cancel();
+  }
+
+  void startTimer() {
+    timers = Timer.periodic(const Duration(milliseconds: 10), ((timer) {
+      setState(() {
+        newTimer++;
+        double min = (newTimer / 100) / 60;
+        double secs = ((newTimer / 100) % 60);
+        displaytime =
+            '${min.toInt().toString().padLeft(2, '0')} : ${secs.toInt().toString().padLeft(2, '0')}';
+      });
+    }));
   }
 
   speech(QuestionModel question) async {
@@ -117,15 +139,19 @@ class _PlayTimePageState extends State<PlayTimePage> {
                 vControllerCorrectAnswer.value.duration) {
               isTutorialOpen = false;
               isScenarioCompleted = isCompleted;
+              isReadyToAnswer = isCompleted ? false : true;
+              isCompleted ? timers.cancel() : null;
               playMusic();
             } else if (vControllerCorrectAnswer.value.position.inSeconds == 1) {
               answerSpeech(answerModel.explanation);
             } else {
               isTutorialOpen = true;
+              isReadyToAnswer = false;
               playMusicLowVolume();
             }
           } else {
             isTutorialOpen = true;
+            isReadyToAnswer = false;
             playMusicLowVolume();
           }
         });
@@ -163,6 +189,9 @@ class _PlayTimePageState extends State<PlayTimePage> {
           }
           if (state is WrongAnswer) {
             wrongAnswerDialog(context);
+            setState(() {
+              newTimer + 5;
+            });
           }
           if (state is NextPage) {
             setState(() {
@@ -328,6 +357,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
                   setState(() {
                     isDone = false;
                     isReadyToAnswer = true;
+                    startTimer();
+                    speechStop();
                   });
                 },
                 child: Container(
@@ -384,48 +415,55 @@ class _PlayTimePageState extends State<PlayTimePage> {
               ),
             ),
             isScenarioCompleted
-                ? Center(
-                    child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Material(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child:
-                              Column(mainAxisSize: MainAxisSize.min, children: [
-                            Icon(
-                              Icons.check_circle_outline,
-                              color: Colors.greenAccent,
-                              size: 80,
-                            ),
-                            SizedBox(height: 50),
-                            InkWell(
-                              onTap: () {
-                                isScenarioCompleted = false;
-                                isReadyToAnswer = false;
-                                context
-                                    .read<QuestionBloc>()
-                                    .add(ClickNextPage());
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 40),
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(14)),
-                                child: Center(
-                                  child: Text(
-                                    'Next',
-                                    style: titleText(
-                                        18, FontWeight.bold, Colors.white),
+                ? Container(
+                    color: transparentBlackColor,
+                    child: Center(
+                        child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.greenAccent,
+                                    size: 80,
                                   ),
-                                ),
-                              ),
-                            )
-                          ])),
-                    ),
-                  ))
+                                  SizedBox(height: 50),
+                                  InkWell(
+                                    onTap: () {
+                                      isScenarioCompleted = false;
+                                      timers.cancel();
+                                      isReadyToAnswer = false;
+                                      context
+                                          .read<QuestionBloc>()
+                                          .add(ClickNextPage());
+                                    },
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 40),
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(14)),
+                                      child: Center(
+                                        child: Text(
+                                          'Next',
+                                          style: titleText(18, FontWeight.bold,
+                                              Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ])),
+                      ),
+                    )),
+                  )
                 : Container(),
             AnimatedContainer(
                 height: isTutorialOpen ? MediaQuery.of(context).size.height : 0,
@@ -502,7 +540,32 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         ]),
                       ),
                     ),
-                  )
+                  ),
+            Positioned(
+              top: 50,
+              left: 20,
+              right: 20,
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 500),
+                opacity: isReadyToAnswer ? 1 : 0,
+                child: Container(
+                  child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.alarm,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text(displaytime,
+                            style: bodyText(24, FontWeight.w500, Colors.white))
+                      ]),
+                ),
+              ),
+            )
           ],
         )));
   }

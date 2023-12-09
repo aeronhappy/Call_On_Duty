@@ -7,7 +7,6 @@ import 'package:call_on_duty/repository/injection_container.dart';
 import 'package:call_on_duty/views/information_page.dart';
 import 'package:call_on_duty/views/game_mode_page.dart';
 import 'package:call_on_duty/views/settings_page.dart';
-import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -162,8 +161,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 10),
                 InkWell(
                   onTap: () {
-                    textToSpeech(
-                        'Ako si Aeron Darelle Maligaya, Ako ay dalawampong taong gulang, nakatira sa Mabacan Calauan Laguna. Ngayon ay isa na akong Mobile App Developer');
                     // exit(0);
                   },
                   child: Container(

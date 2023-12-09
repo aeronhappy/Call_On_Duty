@@ -86,37 +86,6 @@ class _GameModePageState extends State<GameModePage> {
                             ),
                           );
                         },
-                        // onTap: gameModeConverter(gameModes[index],
-                        //         isModerateModeOpen, isSevereModeOpen)
-                        //     ? () async {
-                        //         bool isRefresh = await Navigator.push(
-                        //           context,
-                        //           MaterialPageRoute(
-                        //             maintainState: false,
-                        //             builder: (context) {
-                        //               return MultiBlocProvider(
-                        //                 providers: [
-                        //                   BlocProvider(
-                        //                     create: (context) => QuestionBloc(
-                        //                         questionRepository: sl(),
-                        //                         networkInfoServices: sl()),
-                        //                   ),
-                        //                 ],
-                        //                 child: PlayTimePage(
-                        //                     questionDifficulty:
-                        //                         gameModes[index]),
-                        //               );
-                        //             },
-                        //           ),
-                        //         );
-
-                        //         if (isRefresh) {
-                        //           setState(() {
-                        //             getModeOpen();
-                        //           });
-                        //         }
-                        //       }
-                        //     : null,
                         child: Container(
                           height: 50,
                           decoration: ShapeDecoration(

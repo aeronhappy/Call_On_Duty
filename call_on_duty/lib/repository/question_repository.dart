@@ -98,7 +98,7 @@ class QuestionRepository implements IQuestionRepository {
             value: 'Rest',
             image: 'assets/image_choices/rest.png',
             explanation: 'makakatulong ito sa pag papaluwag ng pag hinga.',
-            video: 'assets/video_answer/L1_fever_1.mp4'),
+            video: 'assets/video_answer/L1_fever_2.mp4'),
         const AnswerModel(
             id: 'a3',
             value: 'Basketball',

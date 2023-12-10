@@ -29,8 +29,11 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
 
     on<GetGameMode>((event, emit) async {
       try {
-        List<QuestionDifficulty> listOfMode =
-            await questionRepository.getMode();
+        List<QuestionDifficulty> listOfMode = [
+          QuestionDifficulty.lesson_1,
+          QuestionDifficulty.lesson_2,
+          QuestionDifficulty.lesson_3
+        ];
         emit(LoadedGameMode(modes: listOfMode));
       } catch (e) {
         emit(FailedQuestion(error: e.toString()));

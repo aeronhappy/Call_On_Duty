@@ -8,20 +8,20 @@ unlockLevelDialog(BuildContext context, QuestionDifficulty questionDifficulty) {
   void unlockNextLevel(QuestionDifficulty questionDifficulty) async {
     var sharedPref = await SharedPreferences.getInstance();
 
-    if (QuestionDifficulty.mild == questionDifficulty) {
+    if (QuestionDifficulty.lesson_1 == questionDifficulty) {
       sharedPref.setBool('ModerateMode', true);
     }
-    if (QuestionDifficulty.moderate == questionDifficulty) {
+    if (QuestionDifficulty.lesson_2 == questionDifficulty) {
       sharedPref.setBool('SevereMode', true);
     }
   }
 
   String unlockMode(QuestionDifficulty questionDifficulty) {
-    if (QuestionDifficulty.mild == questionDifficulty) {
-      return 'You unlock Moderate Mode.';
+    if (QuestionDifficulty.lesson_1 == questionDifficulty) {
+      return 'You unlock Lesson 2 Mode.';
     }
-    if (QuestionDifficulty.moderate == questionDifficulty) {
-      return 'You unlock Severe Mode.';
+    if (QuestionDifficulty.lesson_2 == questionDifficulty) {
+      return 'You unlock Lesson 3 Mode.';
     }
     return '';
   }

@@ -6,11 +6,13 @@ import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/answer_model.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
+import 'package:call_on_duty/views/game_mode_page.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:call_on_duty/widgets/unlock_level_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayTimePage extends StatefulWidget {
@@ -27,6 +29,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
   int newTimer = 0;
   String displaytime = '00.00';
   // bool isPaused = true;
+
+  int myScore = 0;
 
   PageController pageController = PageController();
   late VideoPlayerController videoPlayerController;
@@ -162,16 +166,45 @@ class _PlayTimePageState extends State<PlayTimePage> {
   }
 
   String bloodySpeech(QuestionDifficulty questionDifficulty) {
-    if (QuestionDifficulty.mild == questionDifficulty) {
-      return 'Ang Mild Mode ay laro kung saan may mapapanood kang video at pipili ka lamang ng dalawang tamang sagot ayon sa kelangan ng tao sa video.';
+    if (QuestionDifficulty.lesson_1 == questionDifficulty) {
+      return 'Ang Lesson 1 Mode ay laro kung saan may mapapanood kang video at pipili ka lamang ng dalawang tamang sagot ayon sa kelangan ng tao sa video.';
     }
-    if (QuestionDifficulty.moderate == questionDifficulty) {
-      return 'Ang Moderate Mode ay may apat na pamimilian. Lahat ng ito ay tamang sagot, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
+    if (QuestionDifficulty.lesson_2 == questionDifficulty) {
+      return 'Ang Lesson 2 Mode ay may apat na pamimilian. Lahat ng ito ay tamang sagot, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
     }
-    if (QuestionDifficulty.severe == questionDifficulty) {
-      return 'Ang Severe Mode ay may anim na pamimilian. Apat ang tama at dalawa ang mali, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
+    if (QuestionDifficulty.lesson_3 == questionDifficulty) {
+      return 'Ang Lesson 3 Mode ay may anim na pamimilian. Apat ang tama at dalawa ang mali, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
     }
     return '';
+  }
+
+  saveScore(int score, int time, QuestionDifficulty questionDifficulty) async {
+    var sharedPref = await SharedPreferences.getInstance();
+    String scorePerLesson = "";
+    String timePerLesson = "";
+
+    if (questionDifficulty == QuestionDifficulty.lesson_1) {
+      scorePerLesson = "lessonOneScore";
+      timePerLesson = "lessonOneTime";
+    } else if (questionDifficulty == QuestionDifficulty.lesson_2) {
+      scorePerLesson = "lessonTwoScore";
+      timePerLesson = "lessonTwoTime";
+    } else {
+      scorePerLesson = "lessonThreeScore";
+      timePerLesson = "lessonThreeTime";
+    }
+
+    int topScore = await sharedPref.getInt(scorePerLesson) ?? 0;
+    int toptime = await sharedPref.getInt(timePerLesson) ?? 0;
+
+    if (topScore < score) {
+      await sharedPref.setInt(scorePerLesson, score);
+      await sharedPref.setInt(timePerLesson, time);
+    } else if (topScore == score) {
+      if (toptime > time) {
+        await sharedPref.setInt(timePerLesson, time);
+      }
+    }
   }
 
   @override
@@ -185,13 +218,18 @@ class _PlayTimePageState extends State<PlayTimePage> {
             playVideo(state.randomQuestions[0]);
           }
           if (state is CorrectAnswer) {
+            setState(() {
+              myScore = myScore + 5;
+            });
             playVideoWithCorrect(state.answerModel, state.isCompleted);
           }
           if (state is WrongAnswer) {
-            wrongAnswerDialog(context);
             setState(() {
-              newTimer + 5;
+              newTimer = newTimer + 5;
+              myScore = myScore - 5;
             });
+
+            wrongAnswerDialog(context);
           }
           if (state is NextPage) {
             setState(() {
@@ -199,6 +237,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
             });
             if (indexCount == listOfQuestion.length) {
               unlockLevelDialog(context, widget.questionDifficulty);
+              saveScore(myScore, newTimer, widget.questionDifficulty);
             } else {
               pageController.nextPage(
                   duration: Duration(milliseconds: 2000),
@@ -308,15 +347,15 @@ class _PlayTimePageState extends State<PlayTimePage> {
                               right: 0,
                               child: DragTarget<int>(
                                 onAccept: (data) {
-                                  if (QuestionDifficulty.mild ==
+                                  if (QuestionDifficulty.lesson_1 ==
                                       widget.questionDifficulty) {
                                     mildSubmitAnswer(questionIndex, data);
                                   }
-                                  if (QuestionDifficulty.moderate ==
+                                  if (QuestionDifficulty.lesson_2 ==
                                       widget.questionDifficulty) {
                                     moderateSubmitAnswer(questionIndex, data);
                                   }
-                                  if (QuestionDifficulty.severe ==
+                                  if (QuestionDifficulty.lesson_3 ==
                                       widget.questionDifficulty) {
                                     severeSubmitAnswer(questionIndex, data);
                                   }
@@ -475,19 +514,19 @@ class _PlayTimePageState extends State<PlayTimePage> {
               child: Material(
                   elevation: 10,
                   borderRadius: BorderRadius.circular(8),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                            color: secondaryColor,
-                            borderRadius: BorderRadius.circular(8)),
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Hero(
+                        tag: widget.questionDifficulty.name,
                         child: Text(
-                          widget.questionDifficulty.name.toUpperCase(),
+                          gameConverter(widget.questionDifficulty),
                           style: titleText(20, FontWeight.bold, Colors.white),
-                        )),
-                  )),
+                        ),
+                      ))),
             ),
             isBloodyDone
                 ? Container()
@@ -542,30 +581,54 @@ class _PlayTimePageState extends State<PlayTimePage> {
                     ),
                   ),
             Positioned(
-              top: 50,
+              top: 100,
               left: 20,
               right: 20,
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 500),
                 opacity: isReadyToAnswer ? 1 : 0,
-                child: Container(
-                  child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.alarm,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 10),
-                        Text(displaytime,
-                            style: bodyText(24, FontWeight.w500, Colors.white))
-                      ]),
-                ),
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.alarm,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 10),
+                      Text(displaytime,
+                          style: bodyText(24, FontWeight.w500, Colors.white))
+                    ]),
               ),
-            )
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Score :",
+                            style: titleText(22, FontWeight.bold, Colors.white),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            myScore.toString(),
+                            style: titleText(26, FontWeight.bold, Colors.white),
+                          ),
+                        ],
+                      ))),
+            ),
           ],
         )));
   }

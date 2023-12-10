@@ -106,18 +106,21 @@ class _GameModePageState extends State<GameModePage> {
                                       child: CircleAvatar(
                                           child: Icon(Icons.lock))),
                               Center(
-                                child: Text(
-                                  gameModes[index].name.toUpperCase(),
-                                  style: bodyText(
-                                      18,
-                                      FontWeight.w500,
-                                      secondaryColor.withOpacity(
-                                          gameModeConverter(
-                                                  gameModes[index],
-                                                  isModerateModeOpen,
-                                                  isSevereModeOpen)
-                                              ? 1
-                                              : .3)),
+                                child: Hero(
+                                  tag: gameModes[index].name,
+                                  child: Text(
+                                    gameConverter(gameModes[index]),
+                                    style: bodyText(
+                                        18,
+                                        FontWeight.w500,
+                                        secondaryColor.withOpacity(
+                                            gameModeConverter(
+                                                    gameModes[index],
+                                                    isModerateModeOpen,
+                                                    isSevereModeOpen)
+                                                ? 1
+                                                : .3)),
+                                  ),
                                 ),
                               ),
                             ],
@@ -138,11 +141,27 @@ class _GameModePageState extends State<GameModePage> {
 
 bool gameModeConverter(QuestionDifficulty questionDifficulty,
     bool isModerateModeOpen, bool isSevereModeOpen) {
-  if (QuestionDifficulty.moderate == questionDifficulty) {
+  if (QuestionDifficulty.lesson_2 == questionDifficulty) {
     return isModerateModeOpen ? true : false;
   }
-  if (QuestionDifficulty.severe == questionDifficulty) {
+  if (QuestionDifficulty.lesson_3 == questionDifficulty) {
     return isSevereModeOpen ? true : false;
   }
   return true;
+}
+
+String gameConverter(QuestionDifficulty questionDifficulty) {
+  String text = "";
+
+  if (questionDifficulty == QuestionDifficulty.lesson_1) {
+    text = "LESSON 1";
+  }
+  if (questionDifficulty == QuestionDifficulty.lesson_2) {
+    text = "LESSON 2";
+  }
+  if (questionDifficulty == QuestionDifficulty.lesson_3) {
+    text = "LESSON 3";
+  }
+
+  return text;
 }

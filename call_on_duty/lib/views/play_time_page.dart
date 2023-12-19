@@ -328,15 +328,14 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                               ),
                                             )),
                                         feedback: CircleAvatar(
-                                          radius: 50,
-                                          child: Text(
-                                            listOfQuestion[questionIndex]
-                                                .choices[answerIndex]
-                                                .value,
-                                            style: titleText(14,
-                                                FontWeight.w500, Colors.white),
-                                          ),
-                                        ),
+                                            radius: 50,
+                                            backgroundColor: Colors.black45,
+                                            child: Image.asset(
+                                              listOfQuestion[questionIndex]
+                                                  .choices[answerIndex]
+                                                  .image,
+                                              height: 100,
+                                            )),
                                         childWhenDragging: Container(),
                                       );
                                     }),
@@ -453,11 +452,11 @@ class _PlayTimePageState extends State<PlayTimePage> {
                           )),
                     ),
                     Positioned(
-                        bottom: -200,
-                        left: 50,
+                        bottom: -100,
+                        right: -90,
                         child: Image.asset(
                           'assets/character/rman.gif',
-                          height: 500,
+                          height: 400,
                         )),
                   ]),
                 ),

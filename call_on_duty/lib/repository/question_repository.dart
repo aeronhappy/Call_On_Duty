@@ -74,8 +74,8 @@ class QuestionRepository implements IQuestionRepository {
               video: 'assets/video_answer/L1_asthma_2.mp4'),
           const AnswerModel(
               id: 'a3',
-              value: 'ice',
-              image: 'assets/image_choices/ice.png',
+              value: 'Ice',
+              image: 'assets/image_choices/yelo.png',
               explanation: '',
               video: ''),
           const AnswerModel(
@@ -494,7 +494,7 @@ class QuestionRepository implements IQuestionRepository {
         const AnswerModel(
             id: 'a6',
             value: 'Ice',
-            image: 'assets/image_choices/ice.png',
+            image: 'assets/image_choices/yelo.png',
             explanation: '',
             video: ''),
       ],
@@ -512,7 +512,7 @@ class QuestionRepository implements IQuestionRepository {
         const AnswerModel(
             id: 'a1',
             value: 'Ice',
-            image: 'assets/image_choices/ice.png',
+            image: 'assets/image_choices/yelo.png',
             explanation:
                 'gumamit ng yelo dahil ito ay makakapagpabawas ng pamamaga ng nabaling buto.',
             video: 'assets/video_answer/L3_fructure_1.mp4'),

@@ -45,6 +45,10 @@ class _GameModePageState extends State<GameModePage> {
       },
       child: Scaffold(
         backgroundColor: secondaryColor,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -52,18 +56,19 @@ class _GameModePageState extends State<GameModePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 100, width: double.infinity),
+              const SizedBox(height: 20, width: double.infinity),
               Text(
                 'GAME MODE',
                 textAlign: TextAlign.center,
-                style: titleText(24, FontWeight.bold, Colors.white),
+                style: titleText(30, FontWeight.bold, Colors.white),
               ),
+              const SizedBox(height: 50, width: double.infinity),
               Expanded(
                 child: ListView.builder(
                   itemCount: gameModes.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(

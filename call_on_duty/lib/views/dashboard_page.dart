@@ -53,6 +53,10 @@ class _DashboardPageState extends State<DashboardPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                CircleAvatar(
+                    radius: 120,
+                    child: Image.asset('assets/icon/call_on_duty.png')),
+                SizedBox(height: 50),
                 InkWell(
                   onTap: () {
                     Navigator.push(

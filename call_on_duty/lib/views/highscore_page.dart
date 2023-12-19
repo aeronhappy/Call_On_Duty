@@ -50,6 +50,10 @@ class _HighscorePageState extends State<HighscorePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: secondaryColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -57,11 +61,11 @@ class _HighscorePageState extends State<HighscorePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 50, width: double.infinity),
+            const SizedBox(height: 20, width: double.infinity),
             Text(
               'Highscore',
               textAlign: TextAlign.center,
-              style: titleText(24, FontWeight.bold, Colors.white),
+              style: titleText(30, FontWeight.bold, Colors.white),
             ),
             SizedBox(height: 20),
             Row(
@@ -72,21 +76,21 @@ class _HighscorePageState extends State<HighscorePage> {
                     width: MediaQuery.of(context).size.width * .3,
                     child: Center(
                       child: Text("Rank",
-                          style: titleText(18, FontWeight.w500, Colors.white)),
+                          style: titleText(22, FontWeight.bold, Colors.white)),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * .2,
                     child: Center(
                       child: Text("Time",
-                          style: titleText(18, FontWeight.w500, Colors.white)),
+                          style: titleText(22, FontWeight.bold, Colors.white)),
                     ),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * .2,
                     child: Center(
                       child: Text("Score",
-                          style: titleText(18, FontWeight.w500, Colors.white)),
+                          style: titleText(22, FontWeight.bold, Colors.white)),
                     ),
                   ),
                 ]),

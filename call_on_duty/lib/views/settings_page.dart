@@ -37,6 +37,10 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: secondaryColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -44,20 +48,23 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 100, width: double.infinity),
+            const SizedBox(height: 20, width: double.infinity),
             Hero(
               tag: 'settings-tag',
               child: Text(
                 'SETTINGS',
                 textAlign: TextAlign.center,
-                style: titleText(24, FontWeight.bold, Colors.white),
+                style: titleText(30, FontWeight.bold, Colors.white),
               ),
             ),
+            const SizedBox(height: 20, width: double.infinity),
             Row(
               children: [
-                Text(
-                  'Music',
-                  style: bodyText(18, FontWeight.w700, Colors.white),
+                Expanded(
+                  child: Text(
+                    'Music',
+                    style: bodyText(18, FontWeight.w700, Colors.white),
+                  ),
                 ),
                 Checkbox(
                     side: const BorderSide(color: Colors.white),
@@ -83,9 +90,11 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             Row(
               children: [
-                Text(
-                  'Sound Effects',
-                  style: bodyText(18, FontWeight.w700, Colors.white),
+                Expanded(
+                  child: Text(
+                    'Sound Effects',
+                    style: bodyText(18, FontWeight.w700, Colors.white),
+                  ),
                 ),
                 Checkbox(
                     side: const BorderSide(color: Colors.white),
@@ -106,9 +115,11 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             Row(
               children: [
-                Text(
-                  'Vibration',
-                  style: bodyText(18, FontWeight.w700, Colors.white),
+                Expanded(
+                  child: Text(
+                    'Vibration',
+                    style: bodyText(18, FontWeight.w700, Colors.white),
+                  ),
                 ),
                 Checkbox(
                     side: const BorderSide(color: Colors.white),

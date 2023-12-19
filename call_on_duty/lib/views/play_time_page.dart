@@ -62,6 +62,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
     super.dispose();
     videoPlayerController.dispose();
     vControllerCorrectAnswer.dispose();
+    speechStop();
     timers.cancel();
   }
 
@@ -285,8 +286,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                         vertical: 20),
                                     gridDelegate:
                                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                                            maxCrossAxisExtent: 200,
-                                            childAspectRatio: 1.3,
+                                            maxCrossAxisExtent: 180,
+                                            childAspectRatio: 1.25,
                                             crossAxisSpacing: 20,
                                             mainAxisSpacing: 20),
                                     itemCount: listOfQuestion[questionIndex]
@@ -303,7 +304,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                             duration:
                                                 Duration(milliseconds: 500),
                                             child: CircleAvatar(
-                                              radius: 50,
+                                              backgroundColor: Colors.black45,
                                               child: Column(
                                                 children: [
                                                   Image.asset(
@@ -414,20 +415,29 @@ class _PlayTimePageState extends State<PlayTimePage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Text(
+                                  listOfQuestion.isEmpty
+                                      ? "No"
+                                      : listOfQuestion[questionIndex]
+                                          .title
+                                          .toUpperCase(),
+                                  style: bodyText(
+                                      20, FontWeight.bold, Colors.redAccent)),
+                              SizedBox(height: 10),
                               Text(
                                 listOfQuestion.isEmpty
                                     ? "No"
                                     : listOfQuestion[questionIndex].text,
                                 style:
-                                    bodyText(18, FontWeight.w500, Colors.black),
+                                    bodyText(16, FontWeight.w500, Colors.black),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.",
                                 style:
-                                    bodyText(18, FontWeight.w500, Colors.black),
+                                    bodyText(16, FontWeight.w500, Colors.black),
                               ),
                               SizedBox(height: 10),
                               SizedBox(

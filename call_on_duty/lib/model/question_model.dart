@@ -3,6 +3,7 @@ import 'answer_model.dart';
 
 class QuestionModel {
   final String id;
+  final String title;
   final String text;
   final QuestionDifficulty difficulty;
   final String video;
@@ -11,6 +12,7 @@ class QuestionModel {
 
   QuestionModel({
     required this.id,
+    required this.title,
     required this.text,
     required this.difficulty,
     required this.video,
@@ -20,6 +22,7 @@ class QuestionModel {
 
   Map toJson() => {
         'id': id,
+        'title': title,
         'text': text,
         'difficulty': difficulty.toString(),
         'video': video,
@@ -30,6 +33,7 @@ class QuestionModel {
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     return QuestionModel(
         id: json['id'] as String,
+        title: json['title'] as String,
         text: json['text'] as String,
         difficulty: QuestionDifficulty.values[json['difficulty']],
         video: json['video'] as String,

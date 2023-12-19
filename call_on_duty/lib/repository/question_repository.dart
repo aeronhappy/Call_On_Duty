@@ -33,11 +33,12 @@ class QuestionRepository implements IQuestionRepository {
   @override
   Future<List<QuestionDifficulty>> getMode() async {
     try {
-      Set<QuestionDifficulty> mode = {};
-      for (var item in listOfQuestion) {
-        mode.add(item.difficulty);
-      }
-      return mode.toList();
+      List<QuestionDifficulty> mode = [
+        QuestionDifficulty.lesson_1,
+        QuestionDifficulty.lesson_2,
+        QuestionDifficulty.lesson_3
+      ];
+      return mode;
     } on Exception catch (_) {
       throw UnimplementedError();
     }
@@ -46,43 +47,47 @@ class QuestionRepository implements IQuestionRepository {
   List<QuestionModel> listOfQuestion = [
     /// LESSON1
     QuestionModel(
-      id: 'q1',
-      text:
-          'Ang asthma o hika ay isang kondisyon na nakakaapekto sa daanan ng hangin sa respiratory system ng isang tao. Ito ay nagdudulot ng kakapusan ng hininga (shortness of breath). Sa kabilang banda, ang asthma ay isang malakas na reaksyon ng immune system sa isang substance tulad ng allergen. Ang reaksyong ito ay humahantong sa pamamaga at pagpapaliit ng mga daanan ng hangin sa mga baga.',
-      difficulty: QuestionDifficulty.lesson_1,
-      video: 'assets/video_question/L1_asthma.mp4',
-      answersId: ['a1', 'a2'],
-      choices: <AnswerModel>[
-        const AnswerModel(
-            id: 'a1',
-            value: 'Rest',
-            image: 'assets/image_choices/rest.png',
-            explanation:
-                'humanap ng mauupuan na kung saan pwede ka na makapahinga at maging komportable.',
-            video: 'assets/video_answer/L1_asthma_1.mp4'),
-        const AnswerModel(
-            id: 'a2',
-            value: 'Inhaler',
-            image: 'assets/image_choices/inhaler.png',
-            explanation:
-                'gumamit ng inhaler upang makatulong ito sa pag papaluwag ng pag hinga',
-            video: 'assets/video_answer/L1_asthma_2.mp4'),
-        const AnswerModel(
-            id: 'a3',
-            value: 'Dahon',
-            image: 'assets/icon/dahon.png',
-            explanation: '',
-            video: ''),
-        const AnswerModel(
-            id: 'a4',
-            value: 'Hot Water',
-            image: 'assets/image_choices/hot_water.png',
-            explanation: '',
-            video: ''),
-      ],
-    ),
+        id: 'q1',
+        title: 'asthma',
+        text:
+            'Ang asthma o hika ay isang kondisyon na nakakaapekto sa daanan ng hangin sa respiratory system ng isang tao. Ito ay nagdudulot ng kakapusan ng hininga (shortness of breath). Sa kabilang banda, ang asthma ay isang malakas na reaksyon ng immune system sa isang substance tulad ng allergen. Ang reaksyong ito ay humahantong sa pamamaga at pagpapaliit ng mga daanan ng hangin sa mga baga.',
+        difficulty: QuestionDifficulty.lesson_1,
+        video: 'assets/video_question/L1_asthma.mp4',
+        answersId: [
+          'a1',
+          'a2'
+        ],
+        choices: <AnswerModel>[
+          const AnswerModel(
+              id: 'a1',
+              value: 'Rest',
+              image: 'assets/image_choices/rest.png',
+              explanation:
+                  'humanap ng mauupuan na kung saan pwede ka na makapahinga at maging komportable.',
+              video: 'assets/video_answer/L1_asthma_1.mp4'),
+          const AnswerModel(
+              id: 'a2',
+              value: 'Inhaler',
+              image: 'assets/image_choices/inhaler.png',
+              explanation:
+                  'gumamit ng inhaler upang makatulong ito sa pag papaluwag ng pag hinga',
+              video: 'assets/video_answer/L1_asthma_2.mp4'),
+          const AnswerModel(
+              id: 'a3',
+              value: 'ice',
+              image: 'assets/image_choices/ice.png',
+              explanation: '',
+              video: ''),
+          const AnswerModel(
+              id: 'a4',
+              value: 'Hot Water',
+              image: 'assets/image_choices/hot_water.png',
+              explanation: '',
+              video: ''),
+        ]),
     QuestionModel(
       id: 'q2',
+      title: 'fever',
       text:
           'Ang lagnat ay isang malawak na kondisyon na naglalarawan sa pagtaas o pag-init ng temperatura ng katawan (mas mataas pa sa 37.8 degrees Celsius Bagamat ito ay kilala bilang isang uri ng karamdaman, hindi dapat ituring na sakit ang lagnat. ',
       difficulty: QuestionDifficulty.lesson_1,
@@ -105,22 +110,23 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L1_fever_2.mp4'),
         const AnswerModel(
             id: 'a3',
-            value: 'Basketball',
-            image: 'assets/icon/dahon.png',
+            value: 'Bandage',
+            image: 'assets/image_choices/bandage.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a4',
-            value: 'Mobile Games',
-            image: 'assets/image_choices/hot_water.png',
+            value: 'Ointment',
+            image: 'assets/image_choices/ointment.png',
             explanation: '',
             video: ''),
       ],
     ),
     QuestionModel(
       id: 'q3',
+      title: 'cuts and bruises',
       text:
-          'Ang mga cuts and brazes ay karaniwang pinsala kabilang dito ang mga sugat tulad ng mga lacerations, puncture wounds, o gasgas.',
+          'Ang mga cuts and bruises ay karaniwang pinsala kabilang dito ang mga sugat tulad ng mga lacerations, puncture wounds, o gasgas.',
       difficulty: QuestionDifficulty.lesson_1,
       video: 'assets/video_question/L1_cuts.mp4',
       answersId: ['a1', 'a2'],
@@ -141,20 +147,21 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L1_cuts_2.mp4'),
         const AnswerModel(
             id: 'a3',
-            value: 'Basketball',
-            image: 'assets/icon/dahon.png',
+            value: 'Blanket',
+            image: 'assets/image_choices/blanket.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a4',
-            value: 'Mobile Games',
-            image: 'assets/image_choices/hot_water.png',
+            value: 'Mouth Spray',
+            image: 'assets/image_choices/mouth_spray.png',
             explanation: '',
             video: ''),
       ],
     ),
     QuestionModel(
       id: 'q4',
+      title: 'headache',
       text:
           'Ang pananakit ng ulo ay karaniwang kondisyon kung saan ang isang tao ay maaaring magkaroon ng banayad o masakit na pagpintig o masikip na sensasyon sa ulo.\nAng pananakit ng ulo na madalas mangyari ay tinatawag na migraine.Ang migraine na isang partikular na uri ng sakit ng ulo ay nararanasan bilang pumipintig na sakit sa isang bahagi ng ulo. Ito ay maaaring katamtaman hanggang malubhang sakit.',
       difficulty: QuestionDifficulty.lesson_1,
@@ -177,20 +184,21 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L1_headache_2.mp4'),
         const AnswerModel(
             id: 'a3',
-            value: 'Basketball',
-            image: 'assets/icon/dahon.png',
+            value: 'Betadine',
+            image: 'assets/image_choices/betadine.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a4',
-            value: 'Mobile Games',
-            image: 'assets/image_choices/hot_water.png',
+            value: 'Inhaler',
+            image: 'assets/image_choices/inhaler.png',
             explanation: '',
             video: ''),
       ],
     ),
     QuestionModel(
       id: 'q5',
+      title: 'chest pain',
       text:
           'Ang pananakit ng dibdib, kakulangan sa ginhawa, o presyon, ay maaaring magpahiwatig ng mahinang sirkulasyon kung saan sa puso ay hindi tumatanggap ng sapat na dugo o oxygen. Pananakit o paninikip ng dibdib as sintomas ng sakit sa puso can be described in several ways. ',
       difficulty: QuestionDifficulty.lesson_1,
@@ -213,13 +221,13 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L1_chestpain_2.mp4'),
         const AnswerModel(
             id: 'a3',
-            value: 'Basketball',
-            image: 'assets/icon/dahon.png',
+            value: 'Alcohol',
+            image: 'assets/image_choices/alcohol.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a4',
-            value: 'Mobile Games',
+            value: 'Hot Water',
             image: 'assets/image_choices/hot_water.png',
             explanation: '',
             video: ''),
@@ -230,6 +238,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q6',
+      title: 'blister',
       text:
           'Ang friction blister ay isang maliit na bulsa ng likido na nabubuo sa itaas na mga layer ng balat na dulot ng patuloy na pagkuskos o presyon sa paglipas ng panahon.\nKaraniwang lumilitaw ang friction blister sa mga paa habang naglalakad o pagkatapos ng malalayong lakarin.',
       difficulty: QuestionDifficulty.lesson_2,
@@ -269,6 +278,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q7',
+      title: 'sore throat',
       text:
           'Ang namamagang lalamunan ay kapag ang isang tao ay may tuyo at magaspang na pananakit sa kanyang lalamunan kapag lumulunok. Ito ay maaaring sanhi ng ilang mga kondisyon kabilang ang isang viral o bacterial infection tulad ng sipon pati narin ang pakikipagusap ng malakas ang boses o ang pagsigaw.',
       difficulty: QuestionDifficulty.lesson_2,
@@ -308,6 +318,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q8',
+      title: 'back pain',
       text:
           'Ang lower back pain ay ang pananakit ng ibabang bahagi ng likod o ang tinatawag na lumbar spine.Ang mga pinsalang ito ay maaaring magresulta mula sa pagbubuhat ng mabibigat na bagay, stress o pinsala sa isang disc sa ating gulugod.',
       difficulty: QuestionDifficulty.lesson_2,
@@ -347,6 +358,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q9',
+      title: 'abdominal pain',
       text:
           'Ang pananakit ng tiyan o abdominal pain ay ang pananakit ng mga bahaging sakop ng tadyang hanggang balakang.Kung ang pananakit ng tiyan ay nagtagal lamang ng ilang oras o araw, ito ay matatawag na acute abdominal pain.',
       difficulty: QuestionDifficulty.lesson_2,
@@ -388,6 +400,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q10',
+      title: 'burn',
       text:
           'Ang burn o paso ay nangyayari kapag ang ating balat ay napadikit o nalagyan ng bagay na mainit. Ang burn ay nagdudulot ng pinsala sa ating balat o sa ilalim nito dahil sa sobrang init, kemikal. ',
       difficulty: QuestionDifficulty.lesson_3,
@@ -424,14 +437,14 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L3_burn_4.mp4'),
         const AnswerModel(
             id: 'a5',
-            value: 'Leaves',
-            image: 'assets/image_choices/rest.png',
+            value: 'Inhaler',
+            image: 'assets/image_choices/inhaler.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a6',
-            value: 'Alcohol',
-            image: 'assets/image_choices/rest.png',
+            value: 'Needle',
+            image: 'assets/image_choices/needle.png',
             explanation: '',
             video: ''),
       ],
@@ -439,6 +452,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q11',
+      title: 'mamal bite',
       text:
           'Ang kagat ng aso ay isang kagat na sugat na dulot ng aso.Ang ilang mga aso ay tahol lamang pagkatapos ng kagat, habang ang ilan ay maaaring magpakita ng ilang pagsalakay bago mangyari.',
       difficulty: QuestionDifficulty.lesson_3,
@@ -473,14 +487,14 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L3_mamal_bite_4.mp4'),
         const AnswerModel(
             id: 'a5',
-            value: 'Leaves',
-            image: 'assets/image_choices/rest.png',
+            value: 'Walk',
+            image: 'assets/image_choices/walk.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a6',
-            value: 'Vinegar',
-            image: 'assets/image_choices/rest.png',
+            value: 'Ice',
+            image: 'assets/image_choices/ice.png',
             explanation: '',
             video: ''),
       ],
@@ -488,6 +502,7 @@ class QuestionRepository implements IQuestionRepository {
 
     QuestionModel(
       id: 'q12',
+      title: 'fructure',
       text:
           'Ang sprain at Strains ay mga pinsala sa ligaments, tendons o muscle. Ang bali ay isang break, chip, o crack sa isang buto. Kapag ang buto na nagsasalubong sa isang kasukasuan ay wala sa normal nitong posisyon ito ay tinatawag na dislokasyon.',
       difficulty: QuestionDifficulty.lesson_3,
@@ -524,14 +539,14 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L3_fructure_4.mp4'),
         const AnswerModel(
             id: 'a5',
-            value: 'Leaves',
-            image: 'assets/image_choices/rest.png',
+            value: 'Alcohol',
+            image: 'assets/image_choices/alcohol.png',
             explanation: '',
             video: ''),
         const AnswerModel(
             id: 'a6',
-            value: 'Vinegar',
-            image: 'assets/image_choices/rest.png',
+            value: 'Betadine',
+            image: 'assets/image_choices/betadine.png',
             explanation: '',
             video: ''),
       ],

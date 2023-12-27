@@ -165,7 +165,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 10),
                 InkWell(
                   onTap: () {
-                    // exit(0);
+                    exit(0);
                   },
                   child: Container(
                     height: 50,

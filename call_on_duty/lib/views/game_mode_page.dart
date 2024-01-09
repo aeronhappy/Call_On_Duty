@@ -70,27 +70,31 @@ class _GameModePageState extends State<GameModePage> {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              maintainState: false,
-                              builder: (context) {
-                                return MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(
-                                      create: (context) => QuestionBloc(
-                                          questionRepository: sl(),
-                                          networkInfoServices: sl()),
-                                    ),
-                                  ],
-                                  child: PlayTimePage(
-                                      questionDifficulty: gameModes[index]),
+                        onTap: gameModeConverter(gameModes[index],
+                                isModerateModeOpen, isSevereModeOpen)
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    maintainState: false,
+                                    builder: (context) {
+                                      return MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider(
+                                            create: (context) => QuestionBloc(
+                                                questionRepository: sl(),
+                                                networkInfoServices: sl()),
+                                          ),
+                                        ],
+                                        child: PlayTimePage(
+                                            questionDifficulty:
+                                                gameModes[index]),
+                                      );
+                                    },
+                                  ),
                                 );
-                              },
-                            ),
-                          );
-                        },
+                              }
+                            : null,
                         child: Container(
                           height: 50,
                           decoration: ShapeDecoration(

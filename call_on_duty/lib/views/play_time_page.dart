@@ -44,6 +44,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   bool isBloodyDone = false;
   bool isTutorialOpen = false;
   bool isScenarioCompleted = false;
+  bool isPlaying = false;
 
   @override
   void initState() {
@@ -105,6 +106,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
 
   void playVideo(QuestionModel question) {
     setState(() {
+      isPlaying = true;
       videoPlayerController = VideoPlayerController.asset(question.video);
       videoPlayerController.addListener(() {
         setState(() {
@@ -132,6 +134,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
         videoPlayerController.play();
       }
     });
+  }
+
+  videoPlayerSkip() {
+    videoPlayerController.seekTo(videoPlayerController.value.duration);
   }
 
   void playVideoWithCorrect(AnswerModel answerModel, bool isCompleted) {
@@ -215,6 +221,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
           if (state is LoadedRandomQuestions) {
             setState(() {
               listOfQuestion = state.randomQuestions;
+              isPlaying = true;
             });
             playVideo(state.randomQuestions[0]);
           }
@@ -236,23 +243,18 @@ class _PlayTimePageState extends State<PlayTimePage> {
             setState(() {
               isDone = false;
             });
-            if (indexCount == listOfQuestion.length) {
+            if (indexCount != listOfQuestion.length) {
+              pageController.nextPage(
+                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+            } else {
               unlockLevelDialog(context, widget.questionDifficulty);
               saveScore(myScore, newTimer, widget.questionDifficulty);
-            } else {
-              pageController.nextPage(
-                  duration: Duration(milliseconds: 2000),
-                  curve: Curves.bounceIn);
             }
           }
         },
         child: Scaffold(
             body: Stack(
           children: [
-            Center(
-              child: CircularProgressIndicator(),
-            ),
-            VideoPlayer(videoPlayerController),
             Center(
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 100),
@@ -262,7 +264,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
                   color: transparentBlackColor,
                   child: PageView.builder(
                       controller: pageController,
-                      physics: const NeverScrollableScrollPhysics(),
                       onPageChanged: (index) {
                         setState(() {
                           questionIndex = index;
@@ -277,6 +278,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         return Stack(
                           children: [
                             Container(
+                              color: Colors.amber,
                               child: Center(
                                 child: GridView.builder(
                                     shrinkWrap: true,
@@ -388,6 +390,66 @@ class _PlayTimePageState extends State<PlayTimePage> {
                 ),
               ),
             ),
+            isReadyToAnswer
+                ? Container()
+                : Stack(
+                    children: [
+                      VideoPlayer(videoPlayerController),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: Row(
+                          children: [
+                            Material(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.red,
+                                child: InkWell(
+                                    borderRadius: BorderRadius.circular(100),
+                                    onTap: () {
+                                      setState(() {
+                                        if (isPlaying) {
+                                          isPlaying = false;
+                                          videoPlayerController.pause();
+                                        } else {
+                                          isPlaying = true;
+                                          videoPlayerController.play();
+                                        }
+                                      });
+                                    },
+                                    child: SizedBox(
+                                      height: 50,
+                                      width: 50,
+                                      child: Icon(
+                                        isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                        color: Colors.white,
+                                      ),
+                                    ))),
+                            SizedBox(width: 10),
+                            Material(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.red,
+                                child: InkWell(
+                                    borderRadius: BorderRadius.circular(12),
+                                    onTap: () {
+                                      videoPlayerSkip();
+                                    },
+                                    child: SizedBox(
+                                        height: 40,
+                                        width: 80,
+                                        child: Center(
+                                          child: Text("Skip",
+                                              style: titleText(
+                                                  20,
+                                                  FontWeight.bold,
+                                                  Colors.white)),
+                                        )))),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
             AnimatedContainer(
               duration: Duration(milliseconds: 500),
               height: isDone ? MediaQuery.of(context).size.height : 0,
@@ -523,19 +585,31 @@ class _PlayTimePageState extends State<PlayTimePage> {
               child: Material(
                   elevation: 10,
                   borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          color: secondaryColor,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Hero(
-                        tag: widget.questionDifficulty.name,
-                        child: Text(
-                          gameConverter(widget.questionDifficulty),
-                          style: titleText(20, FontWeight.bold, Colors.white),
-                        ),
-                      ))),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: secondaryColor,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios, color: Colors.white),
+                            SizedBox(width: 5),
+                            Hero(
+                              tag: widget.questionDifficulty.name,
+                              child: Text(
+                                gameConverter(widget.questionDifficulty),
+                                style: titleText(
+                                    20, FontWeight.bold, Colors.white),
+                              ),
+                            ),
+                          ],
+                        )),
+                  )),
             ),
             isBloodyDone
                 ? Container()

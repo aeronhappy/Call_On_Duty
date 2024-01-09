@@ -368,7 +368,7 @@ class QuestionRepository implements IQuestionRepository {
         const AnswerModel(
             id: 'a1',
             value: 'Water',
-            image: 'assets/image_choices/how_water.png',
+            image: 'assets/image_choices/hot_water.png',
             explanation:
                 'uminom palagi ng isang basong tubig upang maiwasan ang pananakit ng tiyan.',
             video: 'assets/video_answer/L2_abdominal_pain_1.mp4'),

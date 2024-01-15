@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,9 +39,7 @@ class _AsnwerPageState extends State<AsnwerPage> {
     context
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
-    videoPlayerController = VideoPlayerController.asset('');
-    vControllerCorrectAnswer = VideoPlayerController.asset('');
-    textToSpeech(bloodySpeech(widget.questionDifficulty));
+    // textToSpeech(bloodySpeech(widget.questionDifficulty));
     timers = Timer.periodic(const Duration(milliseconds: 0), ((timer) {}));
   }
 

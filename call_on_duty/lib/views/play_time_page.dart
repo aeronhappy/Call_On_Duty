@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
-import 'package:call_on_duty/model/answer_model.dart';
 import 'package:call_on_duty/model/question_model.dart';
+import 'package:call_on_duty/repository/injection_container.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
 import 'package:call_on_duty/views/game_mode_page.dart';
+import 'package:call_on_duty/views/video_player.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:call_on_duty/widgets/unlock_level_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
 
 class PlayTimePage extends StatefulWidget {
   final QuestionDifficulty questionDifficulty;
@@ -33,8 +33,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
   int myScore = 0;
 
   PageController pageController = PageController();
-  late VideoPlayerController videoPlayerController;
-  late VideoPlayerController vControllerCorrectAnswer;
   bool isReadyToAnswer = false;
   bool isDone = false;
   List<QuestionModel> listOfQuestion = [];
@@ -44,7 +42,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
   bool isBloodyDone = false;
   bool isTutorialOpen = false;
   bool isScenarioCompleted = false;
-  bool isPlaying = false;
 
   @override
   void initState() {
@@ -52,17 +49,13 @@ class _PlayTimePageState extends State<PlayTimePage> {
     context
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
-    videoPlayerController = VideoPlayerController.asset('');
-    vControllerCorrectAnswer = VideoPlayerController.asset('');
-    textToSpeech(bloodySpeech(widget.questionDifficulty));
+    // textToSpeech(bloodySpeech(widget.questionDifficulty));
     timers = Timer.periodic(const Duration(milliseconds: 0), ((timer) {}));
   }
 
   @override
   void dispose() {
     super.dispose();
-    videoPlayerController.dispose();
-    vControllerCorrectAnswer.dispose();
     speechStop();
     timers.cancel();
   }
@@ -104,72 +97,23 @@ class _PlayTimePageState extends State<PlayTimePage> {
     });
   }
 
-  void playVideo(QuestionModel question) {
-    setState(() {
-      isPlaying = true;
-      videoPlayerController = VideoPlayerController.asset(question.video);
-      videoPlayerController.addListener(() {
-        setState(() {
-          if (videoPlayerController.value.duration != Duration.zero) {
-            if (videoPlayerController.value.position ==
-                videoPlayerController.value.duration) {
-              isDone = true;
-              isReadyToAnswer = false;
-              speech(question);
-              playMusic();
-            } else {
-              isDone = false;
-              isReadyToAnswer = false;
-              playMusicLowVolume();
-            }
-          } else {
-            isDone = false;
-            isReadyToAnswer = false;
-            playMusicLowVolume();
-          }
-        });
-      });
-      videoPlayerController.initialize().then((_) => setState(() {}));
-      if (isBloodyDone) {
-        videoPlayerController.play();
-      }
-    });
-  }
-
-  videoPlayerSkip() {
-    videoPlayerController.seekTo(videoPlayerController.value.duration);
-  }
-
-  void playVideoWithCorrect(AnswerModel answerModel, bool isCompleted) {
-    setState(() {
-      vControllerCorrectAnswer = VideoPlayerController.asset(answerModel.video);
-      vControllerCorrectAnswer.addListener(() {
-        setState(() {
-          if (vControllerCorrectAnswer.value.duration != Duration.zero) {
-            if (vControllerCorrectAnswer.value.position ==
-                vControllerCorrectAnswer.value.duration) {
-              isTutorialOpen = false;
-              isScenarioCompleted = isCompleted;
-              isReadyToAnswer = isCompleted ? false : true;
-              isCompleted ? timers.cancel() : null;
-              playMusic();
-            } else if (vControllerCorrectAnswer.value.position.inSeconds == 1) {
-              answerSpeech(answerModel.explanation);
-            } else {
-              isTutorialOpen = true;
-              isReadyToAnswer = false;
-              playMusicLowVolume();
-            }
-          } else {
-            isTutorialOpen = true;
-            isReadyToAnswer = false;
-            playMusicLowVolume();
-          }
-        });
-      });
-      vControllerCorrectAnswer.initialize().then((_) => setState(() {}));
-      vControllerCorrectAnswer.play();
-    });
+  void playVideo(String video) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => QuestionBloc(
+                    questionRepository: sl(), networkInfoServices: sl()),
+              ),
+            ],
+            child: VideoPlayerPage(video: video),
+          );
+        },
+      ),
+    );
   }
 
   String bloodySpeech(QuestionDifficulty questionDifficulty) {
@@ -221,15 +165,14 @@ class _PlayTimePageState extends State<PlayTimePage> {
           if (state is LoadedRandomQuestions) {
             setState(() {
               listOfQuestion = state.randomQuestions;
-              isPlaying = true;
             });
-            playVideo(state.randomQuestions[0]);
+            // playVideo(state.randomQuestions[0].video);
           }
           if (state is CorrectAnswer) {
             setState(() {
               myScore = myScore + 5;
             });
-            playVideoWithCorrect(state.answerModel, state.isCompleted);
+            playVideo(state.answerModel.video);
           }
           if (state is WrongAnswer) {
             setState(() {
@@ -259,7 +202,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 100),
                 curve: Curves.bounceInOut,
-                opacity: isReadyToAnswer ? 1 : 0,
+                opacity: isReadyToAnswer ? 1 : 1,
                 child: Container(
                   color: transparentBlackColor,
                   child: PageView.builder(
@@ -271,7 +214,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                           indexList.clear();
                           indexCount++;
                         });
-                        playVideo(listOfQuestion[index]);
+                        playVideo(listOfQuestion[index].video);
                       },
                       itemCount: listOfQuestion.length,
                       itemBuilder: (context, questionIndex) {
@@ -390,66 +333,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
                 ),
               ),
             ),
-            isReadyToAnswer
-                ? Container()
-                : Stack(
-                    children: [
-                      VideoPlayer(videoPlayerController),
-                      Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: Row(
-                          children: [
-                            Material(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.red,
-                                child: InkWell(
-                                    borderRadius: BorderRadius.circular(100),
-                                    onTap: () {
-                                      setState(() {
-                                        if (isPlaying) {
-                                          isPlaying = false;
-                                          videoPlayerController.pause();
-                                        } else {
-                                          isPlaying = true;
-                                          videoPlayerController.play();
-                                        }
-                                      });
-                                    },
-                                    child: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: Icon(
-                                        isPlaying
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                      ),
-                                    ))),
-                            SizedBox(width: 10),
-                            Material(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Colors.red,
-                                child: InkWell(
-                                    borderRadius: BorderRadius.circular(12),
-                                    onTap: () {
-                                      videoPlayerSkip();
-                                    },
-                                    child: SizedBox(
-                                        height: 40,
-                                        width: 80,
-                                        child: Center(
-                                          child: Text("Skip",
-                                              style: titleText(
-                                                  20,
-                                                  FontWeight.bold,
-                                                  Colors.white)),
-                                        )))),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
             AnimatedContainer(
               duration: Duration(milliseconds: 500),
               height: isDone ? MediaQuery.of(context).size.height : 0,
@@ -575,10 +458,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
                     )),
                   )
                 : Container(),
-            AnimatedContainer(
-                height: isTutorialOpen ? MediaQuery.of(context).size.height : 0,
-                duration: Duration(milliseconds: 500),
-                child: VideoPlayer(vControllerCorrectAnswer)),
             Positioned(
               top: 40,
               left: 20,
@@ -621,7 +500,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         setState(() {
                           speechStop();
                           isBloodyDone = true;
-                          videoPlayerController.play();
+
+                          playVideo(listOfQuestion[0].video);
                         });
                       },
                       child: Container(

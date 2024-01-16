@@ -33,8 +33,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
   int myScore = 0;
 
   PageController pageController = PageController();
-  bool isReadyToAnswer = false;
-  bool isDone = false;
   List<QuestionModel> listOfQuestion = [];
   int questionIndex = 0;
   List<int> indexList = [];
@@ -42,6 +40,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   bool isBloodyDone = false;
   bool isTutorialOpen = false;
   bool isScenarioCompleted = false;
+  bool isLessonCompleted = false;
 
   @override
   void initState() {
@@ -49,7 +48,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
     context
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
-    // textToSpeech(bloodySpeech(widget.questionDifficulty));
+    textToSpeech(bloodySpeech(widget.questionDifficulty));
     timers = Timer.periodic(const Duration(milliseconds: 0), ((timer) {}));
   }
 
@@ -158,6 +157,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
     }
   }
 
+/////////////////
+/////////////////
+/////////////////
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<QuestionBloc, QuestionState>(
@@ -166,11 +169,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
             setState(() {
               listOfQuestion = state.randomQuestions;
             });
-            // playVideo(state.randomQuestions[0].video);
           }
           if (state is CorrectAnswer) {
             setState(() {
-              myScore = myScore + 5;
+              myScore = myScore + 10;
             });
             playVideo(state.answerModel.video);
           }
@@ -184,7 +186,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
           }
           if (state is NextPage) {
             setState(() {
-              isDone = false;
+              isScenarioCompleted = false;
             });
             if (indexCount != listOfQuestion.length) {
               pageController.nextPage(
@@ -198,403 +200,201 @@ class _PlayTimePageState extends State<PlayTimePage> {
         child: Scaffold(
             body: Stack(
           children: [
-            Center(
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 100),
-                curve: Curves.bounceInOut,
-                opacity: isReadyToAnswer ? 1 : 1,
-                child: Container(
-                  color: transparentBlackColor,
-                  child: PageView.builder(
-                      controller: pageController,
-                      onPageChanged: (index) {
-                        setState(() {
-                          questionIndex = index;
-                          isReadyToAnswer = false;
-                          indexList.clear();
-                          indexCount++;
-                        });
-                        playVideo(listOfQuestion[index].video);
-                      },
-                      itemCount: listOfQuestion.length,
-                      itemBuilder: (context, questionIndex) {
-                        return Stack(
-                          children: [
-                            Container(
-                              color: Colors.amber,
-                              child: Center(
-                                child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                                            maxCrossAxisExtent: 180,
-                                            childAspectRatio: 1.25,
-                                            crossAxisSpacing: 20,
-                                            mainAxisSpacing: 20),
-                                    itemCount: listOfQuestion[questionIndex]
-                                        .choices
-                                        .length,
-                                    itemBuilder: (context, answerIndex) {
-                                      return Draggable(
-                                        data: answerIndex,
-                                        child: AnimatedOpacity(
-                                            opacity:
-                                                indexList.contains(answerIndex)
-                                                    ? 0
-                                                    : 1,
-                                            duration:
-                                                Duration(milliseconds: 500),
-                                            child: CircleAvatar(
-                                              backgroundColor: Colors.black45,
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
+            Positioned(
+                height: MediaQuery.of(context).size.height,
+                child: Opacity(
+                    opacity: .2,
+                    child: Image.asset("assets/icon/splash_screen.png"))),
+            Container(
+              color: transparentBlackColor,
+              child: SafeArea(
+                child: PageView.builder(
+                    controller: pageController,
+                    physics: NeverScrollableScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() {
+                        questionIndex = index;
+                        indexList.clear();
+                        indexCount++;
+                      });
+                      playVideo(listOfQuestion[index].video);
+                    },
+                    itemCount: listOfQuestion.length,
+                    itemBuilder: (context, questionIndex) {
+                      return Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.alarm,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 10),
+                                Text(displaytime,
+                                    style: bodyText(
+                                        24, FontWeight.w500, Colors.white)),
+                                SizedBox(width: 20),
+                              ]),
+                          Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: Colors.white),
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        listOfQuestion.isEmpty
+                                            ? "No"
+                                            : listOfQuestion[questionIndex]
+                                                .title
+                                                .toUpperCase(),
+                                        style: bodyText(20, FontWeight.bold,
+                                            Colors.redAccent)),
+                                  ]),
+                            ),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 200,
+                                          childAspectRatio: 1.2,
+                                          crossAxisSpacing: 30,
+                                          mainAxisSpacing: 30),
+                                  itemCount: listOfQuestion[questionIndex]
+                                      .choices
+                                      .length,
+                                  itemBuilder: (context, answerIndex) {
+                                    return Draggable(
+                                      data: answerIndex,
+                                      child: AnimatedOpacity(
+                                          opacity:
+                                              indexList.contains(answerIndex)
+                                                  ? 0
+                                                  : 1,
+                                          duration: Duration(milliseconds: 500),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 60,
+                                                backgroundColor: Colors.black45,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Image.asset(
                                                     listOfQuestion[
                                                             questionIndex]
                                                         .choices[answerIndex]
                                                         .image,
-                                                    height: 100,
+                                                    fit: BoxFit.cover,
                                                   ),
-                                                  Text(
-                                                    listOfQuestion[
-                                                            questionIndex]
-                                                        .choices[answerIndex]
-                                                        .value,
-                                                    style: titleText(
-                                                        16,
-                                                        FontWeight.w500,
-                                                        Colors.white),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
-                                            )),
-                                        feedback: CircleAvatar(
-                                            radius: 50,
-                                            backgroundColor: Colors.black45,
-                                            child: Image.asset(
-                                              listOfQuestion[questionIndex]
-                                                  .choices[answerIndex]
-                                                  .image,
-                                              height: 100,
-                                            )),
-                                        childWhenDragging: Container(),
-                                      );
-                                    }),
-                              ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                listOfQuestion[questionIndex]
+                                                    .choices[answerIndex]
+                                                    .value,
+                                                style: titleText(
+                                                    14,
+                                                    FontWeight.w500,
+                                                    Colors.white),
+                                              ),
+                                            ],
+                                          )),
+                                      feedback: CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: Colors.black45,
+                                          child: Image.asset(
+                                            listOfQuestion[questionIndex]
+                                                .choices[answerIndex]
+                                                .image,
+                                            height: 100,
+                                          )),
+                                      childWhenDragging: Container(),
+                                    );
+                                  }),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: DragTarget<int>(
-                                onAccept: (data) {
-                                  if (QuestionDifficulty.lesson_1 ==
-                                      widget.questionDifficulty) {
-                                    mildSubmitAnswer(questionIndex, data);
-                                  }
-                                  if (QuestionDifficulty.lesson_2 ==
-                                      widget.questionDifficulty) {
-                                    moderateSubmitAnswer(questionIndex, data);
-                                  }
-                                  if (QuestionDifficulty.lesson_3 ==
-                                      widget.questionDifficulty) {
-                                    severeSubmitAnswer(questionIndex, data);
-                                  }
-                                },
-                                builder:
-                                    (context, candidateData, rejectedData) {
-                                  return Container(
-                                    height: 100,
-                                    color: candidateData.isEmpty
-                                        ? Colors.grey
-                                        : Colors.red,
-                                    child: Center(
-                                      child: Text(
-                                        candidateData.isEmpty
-                                            ? 'Drag here your answer'
-                                            : 'Drop here your answer',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        );
-                      }),
-                ),
-              ),
-            ),
-            AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              height: isDone ? MediaQuery.of(context).size.height : 0,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    isDone = false;
-                    isReadyToAnswer = true;
-                    startTimer();
-                    speechStop();
-                  });
-                },
-                child: Container(
-                  color: transparentBlackColor,
-                  height: double.infinity,
-                  child: Stack(children: [
-                    Center(
-                      child: Container(
-                          margin: EdgeInsets.all(20),
-                          padding: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                  listOfQuestion.isEmpty
-                                      ? "No"
-                                      : listOfQuestion[questionIndex]
-                                          .title
-                                          .toUpperCase(),
-                                  style: bodyText(
-                                      20, FontWeight.bold, Colors.redAccent)),
-                              SizedBox(height: 10),
-                              Text(
-                                listOfQuestion.isEmpty
-                                    ? "No"
-                                    : listOfQuestion[questionIndex].text,
-                                style:
-                                    bodyText(16, FontWeight.w500, Colors.black),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.",
-                                style:
-                                    bodyText(16, FontWeight.w500, Colors.black),
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Text(
-                                  "Tap to continue",
-                                  textAlign: TextAlign.center,
-                                  style: bodyText(
-                                      12, FontWeight.w400, Colors.black),
-                                ),
-                              )
-                            ],
-                          )),
-                    ),
-                    Positioned(
-                        bottom: -100,
-                        right: -90,
-                        child: Image.asset(
-                          'assets/character/rman.gif',
-                          height: 400,
-                        )),
-                  ]),
-                ),
-              ),
-            ),
-            isScenarioCompleted
-                ? Container(
-                    color: transparentBlackColor,
-                    child: Center(
-                        child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Material(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    color: Colors.greenAccent,
-                                    size: 80,
-                                  ),
-                                  SizedBox(height: 50),
-                                  InkWell(
-                                    onTap: () {
-                                      isScenarioCompleted = false;
-                                      timers.cancel();
-                                      isReadyToAnswer = false;
-                                      context
-                                          .read<QuestionBloc>()
-                                          .add(ClickNextPage());
-                                    },
-                                    child: Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 40),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(14)),
-                                      child: Center(
-                                        child: Text(
-                                          'Next',
-                                          style: titleText(18, FontWeight.bold,
-                                              Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ])),
-                      ),
-                    )),
-                  )
-                : Container(),
-            Positioned(
-              top: 40,
-              left: 20,
-              child: Material(
-                  elevation: 10,
-                  borderRadius: BorderRadius.circular(8),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                            color: secondaryColor,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Row(
-                          children: [
-                            Icon(Icons.arrow_back_ios, color: Colors.white),
-                            SizedBox(width: 5),
-                            Hero(
-                              tag: widget.questionDifficulty.name,
-                              child: Text(
-                                gameConverter(widget.questionDifficulty),
-                                style: titleText(
-                                    20, FontWeight.bold, Colors.white),
-                              ),
-                            ),
-                          ],
-                        )),
-                  )),
-            ),
-            isBloodyDone
-                ? Container()
-                : AnimatedOpacity(
-                    duration: Duration(milliseconds: 500),
-                    opacity: isBloodyDone ? 0 : 1,
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          speechStop();
-                          isBloodyDone = true;
-
-                          playVideo(listOfQuestion[0].video);
-                        });
-                      },
-                      child: Container(
-                        color: transparentBlackColor,
-                        height: double.infinity,
-                        child: Stack(children: [
-                          Center(
-                            child: Container(
-                                margin: EdgeInsets.all(20),
-                                padding: EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      bloodySpeech(widget.questionDifficulty),
-                                      style: bodyText(
-                                          18, FontWeight.w500, Colors.black),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Tap to continue",
-                                      style: bodyText(
-                                          12, FontWeight.w400, Colors.black),
-                                    )
-                                  ],
-                                )),
                           ),
                           Positioned(
-                              bottom: -150,
-                              left: 50,
-                              child: Image.asset(
-                                'assets/character/rman.gif',
-                                height: 500,
-                              )),
-                        ]),
-                      ),
-                    ),
-                  ),
-            Positioned(
-              top: 100,
-              left: 20,
-              right: 20,
-              child: AnimatedOpacity(
-                duration: Duration(milliseconds: 500),
-                opacity: isReadyToAnswer ? 1 : 0,
-                child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.alarm,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 10),
-                      Text(displaytime,
-                          style: bodyText(24, FontWeight.w500, Colors.white))
-                    ]),
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: DragTarget<int>(
+                              onAccept: (data) {
+                                if (QuestionDifficulty.lesson_1 ==
+                                    widget.questionDifficulty) {
+                                  mildSubmitAnswer(questionIndex, data);
+                                }
+                                if (QuestionDifficulty.lesson_2 ==
+                                    widget.questionDifficulty) {
+                                  moderateSubmitAnswer(questionIndex, data);
+                                }
+                                if (QuestionDifficulty.lesson_3 ==
+                                    widget.questionDifficulty) {
+                                  severeSubmitAnswer(questionIndex, data);
+                                }
+                              },
+                              builder: (context, candidateData, rejectedData) {
+                                return Container(
+                                  height: 80,
+                                  color: candidateData.isEmpty
+                                      ? Colors.grey
+                                      : Colors.red,
+                                  child: Center(
+                                    child: Text(
+                                      candidateData.isEmpty
+                                          ? 'Drag here your answer'
+                                          : 'Drop here your answer',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      );
+                    }),
               ),
             ),
-            Positioned(
-              top: 40,
-              right: 20,
-              child: Material(
-                  elevation: 10,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          color: secondaryColor,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Score :",
-                            style: titleText(22, FontWeight.bold, Colors.white),
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            myScore.toString(),
-                            style: titleText(26, FontWeight.bold, Colors.white),
-                          ),
-                        ],
-                      ))),
+
+            //////
+            //////
+            //////
+
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: Image.asset(
+                "assets/icon/splash_screen.png",
+                fit: BoxFit.fitHeight,
+              ),
             ),
           ],
         )));
   }
+
+//////////////
+//////////////
+//////////////
 
   void mildSubmitAnswer(int questionIndex, int answerIndex) {
     if (listOfQuestion[questionIndex]

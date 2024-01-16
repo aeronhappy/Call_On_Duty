@@ -3,6 +3,7 @@ import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/repository/injection_container.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
+import 'package:call_on_duty/views/answer_page.dart';
 import 'package:call_on_duty/views/play_time_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,7 +77,6 @@ class _GameModePageState extends State<GameModePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    maintainState: false,
                                     builder: (context) {
                                       return MultiBlocProvider(
                                         providers: [

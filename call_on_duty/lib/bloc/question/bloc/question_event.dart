@@ -11,14 +11,16 @@ class GetGameMode extends QuestionEvent {}
 
 class SubmitAnswer extends QuestionEvent {
   final bool isCorrect;
-  final bool isCompleted;
+  final bool isScenarioCompleted;
   final AnswerModel answerModel;
   SubmitAnswer(
       {required this.isCorrect,
-      required this.isCompleted,
+      required this.isScenarioCompleted,
       required this.answerModel});
 }
 
 class ClickNextPage extends QuestionEvent {}
 
-class ScenarioEnded extends QuestionEvent {}
+class ScenarioCompleted extends QuestionEvent {}
+
+class LessonEnd extends QuestionEvent {}

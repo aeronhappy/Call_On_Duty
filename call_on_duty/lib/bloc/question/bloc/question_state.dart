@@ -29,9 +29,11 @@ class NextPage extends QuestionState {}
 class WrongAnswer extends QuestionState {}
 
 class CorrectAnswer extends QuestionState {
-  final bool isCompleted;
+  final bool isScenarioCompleted;
   final AnswerModel answerModel;
-  CorrectAnswer({required this.isCompleted, required this.answerModel});
+  CorrectAnswer({required this.isScenarioCompleted, required this.answerModel});
 }
+
+class OpenDescription extends QuestionState {}
 
 class LevelDone extends QuestionState {}

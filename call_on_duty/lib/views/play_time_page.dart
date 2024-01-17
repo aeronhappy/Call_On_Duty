@@ -37,8 +37,9 @@ class _PlayTimePageState extends State<PlayTimePage> {
   int questionIndex = 0;
   List<int> indexList = [];
   int indexCount = 1;
-  bool isBloodyDone = false;
+
   bool isTutorialOpen = false;
+  bool isDescriptionDone = false;
   bool isScenarioCompleted = false;
   bool isLessonCompleted = false;
 
@@ -96,7 +97,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
     });
   }
 
-  void playVideo(String video) {
+  void playVideo(QuestionModel questionModel) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -108,7 +109,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                     questionRepository: sl(), networkInfoServices: sl()),
               ),
             ],
-            child: VideoPlayerPage(video: video),
+            child: VideoPlayerPage(questionModel: questionModel),
           );
         },
       ),
@@ -173,15 +174,20 @@ class _PlayTimePageState extends State<PlayTimePage> {
           if (state is CorrectAnswer) {
             setState(() {
               myScore = myScore + 10;
+              isScenarioCompleted = state.isScenarioCompleted;
             });
-            playVideo(state.answerModel.video);
+            // playVideo(state.answerModel);
+          }
+          if (state is OpenDescription) {
+            setState(() {
+              isDescriptionDone = false;
+            });
           }
           if (state is WrongAnswer) {
             setState(() {
               newTimer = newTimer + 5;
               myScore = myScore - 5;
             });
-
             wrongAnswerDialog(context);
           }
           if (state is NextPage) {
@@ -190,7 +196,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
             });
             if (indexCount != listOfQuestion.length) {
               pageController.nextPage(
-                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+                  duration: Duration(milliseconds: 1), curve: Curves.easeIn);
             } else {
               unlockLevelDialog(context, widget.questionDifficulty);
               saveScore(myScore, newTimer, widget.questionDifficulty);
@@ -217,7 +223,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                         indexList.clear();
                         indexCount++;
                       });
-                      playVideo(listOfQuestion[index].video);
+                      playVideo(listOfQuestion[index]);
                     },
                     itemCount: listOfQuestion.length,
                     itemBuilder: (context, questionIndex) {
@@ -377,16 +383,157 @@ class _PlayTimePageState extends State<PlayTimePage> {
               ),
             ),
 
+            ////
+            ////
+
+            isScenarioCompleted
+                ? Container(
+                    color: transparentBlackColor,
+                    child: Center(
+                        child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.greenAccent,
+                                    size: 80,
+                                  ),
+                                  SizedBox(height: 50),
+                                  InkWell(
+                                    onTap: () {
+                                      isScenarioCompleted = false;
+                                      timers.cancel();
+                                      context
+                                          .read<QuestionBloc>()
+                                          .add(ClickNextPage());
+
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 40),
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(14)),
+                                      child: Center(
+                                        child: Text(
+                                          'Next',
+                                          style: titleText(18, FontWeight.bold,
+                                              Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ])),
+                      ),
+                    )),
+                  )
+                : Container(),
+
             //////
             //////
             //////
 
-            Container(
-              height: MediaQuery.of(context).size.height,
-              child: Image.asset(
-                "assets/icon/splash_screen.png",
-                fit: BoxFit.fitHeight,
-              ),
+            isTutorialOpen
+                ? Container()
+                : InkWell(
+                    onTap: () {
+                      setState(() {
+                        speechStop();
+                        isTutorialOpen = true;
+                        playVideo(listOfQuestion[0]);
+                      });
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          child: Image.asset(
+                            "assets/icon/splash_screen.png",
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                        Container(
+                          color: transparentBlackColor,
+                          height: double.infinity,
+                          child: Stack(children: [
+                            Center(
+                              child: Container(
+                                  margin: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        bloodySpeech(widget.questionDifficulty),
+                                        style: bodyText(
+                                            18, FontWeight.w500, Colors.black),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "Tap to continue",
+                                        style: bodyText(
+                                            12, FontWeight.w400, Colors.black),
+                                      )
+                                    ],
+                                  )),
+                            ),
+                            Positioned(
+                                bottom: -150,
+                                left: 50,
+                                child: Image.asset(
+                                  'assets/character/rman.gif',
+                                  height: 500,
+                                )),
+                          ]),
+                        ),
+                      ],
+                    ),
+                  ),
+
+            Positioned(
+              top: 40,
+              left: 20,
+              child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: secondaryColor,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Row(
+                          children: [
+                            Icon(Icons.arrow_back_ios, color: Colors.white),
+                            SizedBox(width: 5),
+                            Hero(
+                              tag: widget.questionDifficulty.name,
+                              child: Text(
+                                gameConverter(widget.questionDifficulty),
+                                style: titleText(
+                                    20, FontWeight.bold, Colors.white),
+                              ),
+                            ),
+                          ],
+                        )),
+                  )),
             ),
           ],
         )));
@@ -406,12 +553,12 @@ class _PlayTimePageState extends State<PlayTimePage> {
 
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: indexList.length == 2 ? true : false,
+          isScenarioCompleted: indexList.length == 2 ? true : false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: false,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }
@@ -425,7 +572,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
@@ -435,7 +582,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
@@ -445,7 +592,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
@@ -455,12 +602,12 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: true,
+          isScenarioCompleted: true,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: false,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }
@@ -474,7 +621,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 1 &&
         listOfQuestion[questionIndex].answersId[1] ==
@@ -484,7 +631,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 2 &&
         listOfQuestion[questionIndex].answersId[2] ==
@@ -494,7 +641,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else if (indexList.length == 3 &&
         listOfQuestion[questionIndex].answersId[3] ==
@@ -504,12 +651,12 @@ class _PlayTimePageState extends State<PlayTimePage> {
       });
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: true,
-          isCompleted: true,
+          isScenarioCompleted: true,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     } else {
       context.read<QuestionBloc>().add(SubmitAnswer(
           isCorrect: false,
-          isCompleted: false,
+          isScenarioCompleted: false,
           answerModel: listOfQuestion[questionIndex].choices[answerIndex]));
     }
   }

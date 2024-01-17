@@ -1,10 +1,15 @@
+import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
+import 'package:call_on_duty/model/question_model.dart';
+import 'package:call_on_duty/repository/injection_container.dart';
+import 'package:call_on_duty/views/description_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerPage extends StatefulWidget {
-  final String video;
-  const VideoPlayerPage({super.key, required this.video});
+  final QuestionModel questionModel;
+  const VideoPlayerPage({super.key, required this.questionModel});
 
   @override
   State<VideoPlayerPage> createState() => _VideoPlayerPageState();
@@ -17,7 +22,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   @override
   void initState() {
     super.initState();
-    playVideo(widget.video);
+    playVideo(widget.questionModel.video);
   }
 
   void playVideo(String video) {
@@ -40,8 +45,28 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   }
 
   videoStop() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => QuestionBloc(
+                    questionRepository: sl(), networkInfoServices: sl()),
+              ),
+            ],
+            child: DescriptionPage(questionModel: widget.questionModel),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
     videoPlayerController.dispose();
-    Navigator.pop(context, false);
   }
 
   @override

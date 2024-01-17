@@ -27,6 +27,10 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       }
     });
 
+    on<ScenarioCompleted>((event, emit) async {
+      emit(OpenDescription());
+    });
+
     on<GetGameMode>((event, emit) async {
       try {
         List<QuestionDifficulty> listOfMode = [
@@ -46,7 +50,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         if (event.isCorrect) {
           await Future.delayed(const Duration(milliseconds: 500), () {
             emit(CorrectAnswer(
-                isCompleted: event.isCompleted,
+                isScenarioCompleted: event.isScenarioCompleted,
                 answerModel: event.answerModel));
           });
         } else {
@@ -67,7 +71,7 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
       }
     });
 
-    on<ScenarioEnded>((event, emit) async {
+    on<LessonEnd>((event, emit) async {
       try {
         emit(LevelDone());
       } catch (e) {

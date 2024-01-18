@@ -24,3 +24,7 @@ class ClickNextPage extends QuestionEvent {}
 class ScenarioCompleted extends QuestionEvent {}
 
 class LessonEnd extends QuestionEvent {}
+
+class TimerStart extends QuestionEvent {}
+
+class TimerPause extends QuestionEvent {}

@@ -37,3 +37,7 @@ class CorrectAnswer extends QuestionState {
 class OpenDescription extends QuestionState {}
 
 class LevelDone extends QuestionState {}
+
+class StartTimer extends QuestionState {}
+
+class PauseTimer extends QuestionState {}

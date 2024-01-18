@@ -1,7 +1,10 @@
+import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/question_model.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DescriptionPage extends StatefulWidget {
   final QuestionModel questionModel;
@@ -12,6 +15,31 @@ class DescriptionPage extends StatefulWidget {
 }
 
 class _DescriptionPageState extends State<DescriptionPage> {
+  @override
+  void initState() {
+    speech(widget.questionModel);
+    super.initState();
+  }
+
+  speech(QuestionModel question) async {
+    playMusicLowVolume();
+    await flutterTts
+        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
+    await flutterTts.setSpeechRate(.5);
+    await flutterTts.setPitch(.7);
+    await flutterTts.speak(question.text +
+        "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.");
+    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
+      playMusic();
+    });
+  }
+
+  @override
+  void dispose() {
+    speechStop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -27,6 +55,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
+              context.read<QuestionBloc>().add(TimerStart());
               Navigator.pop(context);
               Navigator.pop(context);
             },

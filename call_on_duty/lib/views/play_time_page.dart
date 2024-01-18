@@ -3,17 +3,19 @@ import 'dart:async';
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
+import 'package:call_on_duty/model/answer_model.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/repository/injection_container.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
+import 'package:call_on_duty/views/correct_video_player.dart';
 import 'package:call_on_duty/views/game_mode_page.dart';
 import 'package:call_on_duty/views/video_player.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
+import 'package:call_on_duty/widgets/string_converter.dart';
 import 'package:call_on_duty/widgets/unlock_level_popup.dart';
 import 'package:call_on_duty/widgets/wrong_answer_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PlayTimePage extends StatefulWidget {
   final QuestionDifficulty questionDifficulty;
@@ -27,7 +29,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   //Timers
   late Timer timers;
   int newTimer = 0;
-  String displaytime = '00.00';
+  String displaytime = '00:00';
   // bool isPaused = true;
 
   int myScore = 0;
@@ -39,7 +41,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
   int indexCount = 1;
 
   bool isTutorialOpen = false;
-  bool isDescriptionDone = false;
   bool isScenarioCompleted = false;
   bool isLessonCompleted = false;
 
@@ -72,31 +73,6 @@ class _PlayTimePageState extends State<PlayTimePage> {
     }));
   }
 
-  speech(QuestionModel question) async {
-    playMusicLowVolume();
-    await flutterTts
-        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
-    await flutterTts.setSpeechRate(.5);
-    await flutterTts.setPitch(.7);
-    await flutterTts.speak(question.text +
-        "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.");
-    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
-      playMusic();
-    });
-  }
-
-  answerSpeech(String text) async {
-    playMusicLowVolume();
-    await flutterTts
-        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
-    await flutterTts.setSpeechRate(.5);
-    await flutterTts.setPitch(.7);
-    await flutterTts.speak(text);
-    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
-      playMusic();
-    });
-  }
-
   void playVideo(QuestionModel questionModel) {
     Navigator.push(
       context,
@@ -116,46 +92,23 @@ class _PlayTimePageState extends State<PlayTimePage> {
     );
   }
 
-  String bloodySpeech(QuestionDifficulty questionDifficulty) {
-    if (QuestionDifficulty.lesson_1 == questionDifficulty) {
-      return 'Ang Lesson 1 Mode ay laro kung saan may mapapanood kang video at pipili ka lamang ng dalawang tamang sagot ayon sa kelangan ng tao sa video.';
-    }
-    if (QuestionDifficulty.lesson_2 == questionDifficulty) {
-      return 'Ang Lesson 2 Mode ay may apat na pamimilian. Lahat ng ito ay tamang sagot, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
-    }
-    if (QuestionDifficulty.lesson_3 == questionDifficulty) {
-      return 'Ang Lesson 3 Mode ay may anim na pamimilian. Apat ang tama at dalawa ang mali, ngunit kelangan mong piliin ayon sa pag kakasunod-sunod.';
-    }
-    return '';
-  }
-
-  saveScore(int score, int time, QuestionDifficulty questionDifficulty) async {
-    var sharedPref = await SharedPreferences.getInstance();
-    String scorePerLesson = "";
-    String timePerLesson = "";
-
-    if (questionDifficulty == QuestionDifficulty.lesson_1) {
-      scorePerLesson = "lessonOneScore";
-      timePerLesson = "lessonOneTime";
-    } else if (questionDifficulty == QuestionDifficulty.lesson_2) {
-      scorePerLesson = "lessonTwoScore";
-      timePerLesson = "lessonTwoTime";
-    } else {
-      scorePerLesson = "lessonThreeScore";
-      timePerLesson = "lessonThreeTime";
-    }
-
-    int topScore = await sharedPref.getInt(scorePerLesson) ?? 0;
-    int toptime = await sharedPref.getInt(timePerLesson) ?? 0;
-
-    if (topScore < score) {
-      await sharedPref.setInt(scorePerLesson, score);
-      await sharedPref.setInt(timePerLesson, time);
-    } else if (topScore == score) {
-      if (toptime > time) {
-        await sharedPref.setInt(timePerLesson, time);
-      }
-    }
+  void playCorrectVideo(AnswerModel answerModel) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => QuestionBloc(
+                    questionRepository: sl(), networkInfoServices: sl()),
+              ),
+            ],
+            child: CorrectVideoPlayerPage(answerModel: answerModel),
+          );
+        },
+      ),
+    );
   }
 
 /////////////////
@@ -176,12 +129,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
               myScore = myScore + 10;
               isScenarioCompleted = state.isScenarioCompleted;
             });
-            // playVideo(state.answerModel);
-          }
-          if (state is OpenDescription) {
-            setState(() {
-              isDescriptionDone = false;
-            });
+            playCorrectVideo(state.answerModel);
           }
           if (state is WrongAnswer) {
             setState(() {
@@ -229,10 +177,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
                     itemBuilder: (context, questionIndex) {
                       return Column(
                         children: [
-                          SizedBox(height: 20),
+                          SizedBox(height: 15),
                           Row(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
@@ -384,6 +332,8 @@ class _PlayTimePageState extends State<PlayTimePage> {
             ),
 
             ////
+            ////////
+            ////////
             ////
 
             isScenarioCompleted

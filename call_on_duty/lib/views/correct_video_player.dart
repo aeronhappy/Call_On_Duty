@@ -1,29 +1,45 @@
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
-import 'package:call_on_duty/model/question_model.dart';
-import 'package:call_on_duty/repository/injection_container.dart';
-import 'package:call_on_duty/views/description_page.dart';
+import 'package:call_on_duty/model/answer_model.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoPlayerPage extends StatefulWidget {
-  final QuestionModel questionModel;
-  const VideoPlayerPage({super.key, required this.questionModel});
+class CorrectVideoPlayerPage extends StatefulWidget {
+  final AnswerModel answerModel;
+  const CorrectVideoPlayerPage({super.key, required this.answerModel});
 
   @override
-  State<VideoPlayerPage> createState() => _VideoPlayerPageState();
+  State<CorrectVideoPlayerPage> createState() => _CorrectVideoPlayerPageState();
 }
 
-class _VideoPlayerPageState extends State<VideoPlayerPage> {
+class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
   late VideoPlayerController videoPlayerController;
   bool isPlaying = true;
+  bool speechDone = false;
 
   @override
   void initState() {
     super.initState();
     context.read<QuestionBloc>().add(TimerPause());
-    playVideo(widget.questionModel.video);
+    playVideo(widget.answerModel.video);
+    answerSpeech(widget.answerModel.explanation);
+  }
+
+  answerSpeech(String text) async {
+    playMusicLowVolume();
+    await flutterTts
+        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
+    await flutterTts.setSpeechRate(.5);
+    await flutterTts.setPitch(.7);
+    await flutterTts.speak(text);
+    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
+      setState(() {
+        speechDone = true;
+      });
+      playMusic();
+    });
   }
 
   void playVideo(String video) {
@@ -47,22 +63,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   videoStop() {
     videoPlayerController.dispose();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => QuestionBloc(
-                    questionRepository: sl(), networkInfoServices: sl()),
-              ),
-            ],
-            child: DescriptionPage(questionModel: widget.questionModel),
-          );
-        },
-      ),
-    );
+    speechStop();
+    Navigator.pop(context);
   }
 
   @override

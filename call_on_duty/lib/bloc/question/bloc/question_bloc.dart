@@ -78,5 +78,21 @@ class QuestionBloc extends Bloc<QuestionEvent, QuestionState> {
         emit(FailedQuestion(error: e.toString()));
       }
     });
+
+    on<TimerStart>((event, emit) async {
+      try {
+        emit(StartTimer());
+      } catch (e) {
+        emit(FailedQuestion(error: e.toString()));
+      }
+    });
+
+    on<TimerPause>((event, emit) async {
+      try {
+        emit(PauseTimer());
+      } catch (e) {
+        emit(FailedQuestion(error: e.toString()));
+      }
+    });
   }
 }

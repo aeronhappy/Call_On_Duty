@@ -1,8 +1,8 @@
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/question_model.dart';
-import 'package:call_on_duty/repository/injection_container.dart';
 import 'package:call_on_duty/views/description_page.dart';
+import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_player/video_player.dart';
@@ -18,12 +18,26 @@ class VideoPlayerPage extends StatefulWidget {
 class _VideoPlayerPageState extends State<VideoPlayerPage> {
   late VideoPlayerController videoPlayerController;
   bool isPlaying = true;
+  bool isDescriptionOpen = false;
 
   @override
   void initState() {
     super.initState();
     context.read<QuestionBloc>().add(TimerPause());
     playVideo(widget.questionModel.video);
+  }
+
+  speech(QuestionModel question) async {
+    playMusicLowVolume();
+    await flutterTts
+        .setVoice({"name": "fil-ph-x-fie-local", "locale": "fil-PH"});
+    await flutterTts.setSpeechRate(.5);
+    await flutterTts.setPitch(.7);
+    await flutterTts.speak(question.text +
+        "Sagutan kung anong kailangan gawin o kailangan gamitin ng pasyente.");
+    await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
+      playMusic();
+    });
   }
 
   void playVideo(String video) {
@@ -47,27 +61,15 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   videoStop() {
     videoPlayerController.dispose();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => QuestionBloc(
-                    questionRepository: sl(), networkInfoServices: sl()),
-              ),
-            ],
-            child: DescriptionPage(questionModel: widget.questionModel),
-          );
-        },
-      ),
-    );
+    setState(() {
+      isDescriptionOpen = true;
+    });
   }
 
   @override
   void dispose() {
     videoPlayerController.dispose();
+    speechStop();
     super.dispose();
   }
 
@@ -124,7 +126,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                           )))),
             ],
           ),
-        )
+        ),
+        isDescriptionOpen
+            ? DescriptionPage(questionModel: widget.questionModel)
+            : Container()
       ],
     );
   }

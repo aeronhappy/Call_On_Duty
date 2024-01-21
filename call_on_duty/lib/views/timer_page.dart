@@ -43,13 +43,6 @@ class _TimerWidgetState extends State<TimerWidget> {
     startTimer();
   }
 
-  // void stopTimer() {
-  //   _timer.cancel();
-  //   setState(() {
-  //     _start = 10;
-  //   });
-  // }
-
   @override
   void dispose() {
     timers.cancel();

@@ -1,4 +1,4 @@
-import 'package:call_on_duty/views/dashboard_page.dart';
+import 'package:call_on_duty/router/app_router.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -10,11 +10,12 @@ void main() async {
   FlutterNativeSplash.remove();
   await di.init();
 
-  runApp(const MyApp());
+  runApp(MyApp(appRouter: AppRouter()));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final AppRouter appRouter;
+  const MyApp({super.key, required this.appRouter});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -59,7 +60,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: DashboardPage(),
+      onGenerateRoute: widget.appRouter.onGenerateRoute,
     );
   }
 }

@@ -1,14 +1,9 @@
 import 'dart:io';
 
-import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
-import 'package:call_on_duty/repository/injection_container.dart';
-import 'package:call_on_duty/views/highscore_page.dart';
-import 'package:call_on_duty/views/game_mode_page.dart';
-import 'package:call_on_duty/views/settings_page.dart';
+import 'package:call_on_duty/router/route_type.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -59,24 +54,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 SizedBox(height: 50),
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        maintainState: false,
-                        builder: (context) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) => QuestionBloc(
-                                    questionRepository: sl(),
-                                    networkInfoServices: sl()),
-                              ),
-                            ],
-                            child: const GameModePage(),
-                          );
-                        },
-                      ),
-                    );
+                    Navigator.pushNamed(context, PageRouter.gameModePage);
                   },
                   child: Container(
                     height: 50,
@@ -94,23 +72,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 10),
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) => QuestionBloc(
-                                    questionRepository: sl(),
-                                    networkInfoServices: sl()),
-                              ),
-                            ],
-                            child: const HighscorePage(),
-                          );
-                        },
-                      ),
-                    );
+                    Navigator.pushNamed(context, PageRouter.highscorePage);
                   },
                   child: Container(
                     height: 50,
@@ -128,23 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 10),
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (context) => QuestionBloc(
-                                    questionRepository: sl(),
-                                    networkInfoServices: sl()),
-                              ),
-                            ],
-                            child: const SettingsPage(),
-                          );
-                        },
-                      ),
-                    );
+                    Navigator.pushNamed(context, PageRouter.settingPage);
                   },
                   child: Container(
                     height: 50,

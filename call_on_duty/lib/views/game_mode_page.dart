@@ -1,9 +1,8 @@
 import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
-import 'package:call_on_duty/repository/injection_container.dart';
+import 'package:call_on_duty/router/route_type.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
-import 'package:call_on_duty/views/play_time_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,25 +72,9 @@ class _GameModePageState extends State<GameModePage> {
                         onTap: gameModeConverter(gameModes[index],
                                 isModerateModeOpen, isSevereModeOpen)
                             ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return MultiBlocProvider(
-                                        providers: [
-                                          BlocProvider(
-                                            create: (context) => QuestionBloc(
-                                                questionRepository: sl(),
-                                                networkInfoServices: sl()),
-                                          ),
-                                        ],
-                                        child: PlayTimePage(
-                                            questionDifficulty:
-                                                gameModes[index]),
-                                      );
-                                    },
-                                  ),
-                                );
+                                Navigator.pushNamed(
+                                    context, PageRouter.playPage,
+                                    arguments: gameModes[index]);
                               }
                             : null,
                         child: Container(

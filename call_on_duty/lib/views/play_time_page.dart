@@ -5,11 +5,9 @@ import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/answer_model.dart';
 import 'package:call_on_duty/model/question_model.dart';
-import 'package:call_on_duty/repository/injection_container.dart';
+import 'package:call_on_duty/router/route_type.dart';
 import 'package:call_on_duty/types/question_difficulty.dart';
-import 'package:call_on_duty/views/correct_video_player.dart';
 import 'package:call_on_duty/views/game_mode_page.dart';
-import 'package:call_on_duty/views/video_player.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:call_on_duty/widgets/string_converter.dart';
 import 'package:call_on_duty/widgets/unlock_level_popup.dart';
@@ -74,41 +72,13 @@ class _PlayTimePageState extends State<PlayTimePage> {
   }
 
   void playVideo(QuestionModel questionModel) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => QuestionBloc(
-                    questionRepository: sl(), networkInfoServices: sl()),
-              ),
-            ],
-            child: VideoPlayerPage(questionModel: questionModel),
-          );
-        },
-      ),
-    );
+    Navigator.pushNamed(context, PageRouter.videoPlayerPage,
+        arguments: questionModel);
   }
 
   void playCorrectVideo(AnswerModel answerModel) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => QuestionBloc(
-                    questionRepository: sl(), networkInfoServices: sl()),
-              ),
-            ],
-            child: CorrectVideoPlayerPage(answerModel: answerModel),
-          );
-        },
-      ),
-    );
+    Navigator.pushNamed(context, PageRouter.correctVideoPlayerPage,
+        arguments: answerModel);
   }
 
 /////////////////

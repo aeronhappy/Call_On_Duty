@@ -62,13 +62,12 @@ class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
   }
 
   videoStop() {
-    videoPlayerController.dispose();
-    speechStop();
     Navigator.pop(context);
   }
 
   @override
   void dispose() {
+    speechStop();
     videoPlayerController.dispose();
     super.dispose();
   }

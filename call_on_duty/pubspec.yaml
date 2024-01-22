@@ -34,7 +34,7 @@ dependencies:
   http: 
   equatable:
   flutter_bloc:
-  shared_preferences: 
+  shared_preferences:
   bloc: 
   dio:
   get_it:

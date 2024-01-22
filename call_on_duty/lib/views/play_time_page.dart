@@ -216,10 +216,10 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               CircleAvatar(
-                                                radius: 60,
+                                                radius: 50,
                                                 backgroundColor: Colors.black45,
                                                 child: Padding(
-                                                  padding: EdgeInsets.all(10),
+                                                  padding: EdgeInsets.all(5),
                                                   child: Image.asset(
                                                     listOfQuestion[
                                                             questionIndex]
@@ -229,7 +229,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 10),
+                                              SizedBox(height: 5),
                                               Text(
                                                 listOfQuestion[questionIndex]
                                                     .choices[answerIndex]

@@ -108,6 +108,12 @@ class _PlayTimePageState extends State<PlayTimePage> {
             });
             wrongAnswerDialog(context);
           }
+          if (state is StartTimer) {
+            startTimer();
+          }
+          if (state is PauseTimer) {
+            timers.cancel();
+          }
           if (state is NextPage) {
             setState(() {
               isScenarioCompleted = false;

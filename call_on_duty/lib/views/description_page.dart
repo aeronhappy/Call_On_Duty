@@ -1,8 +1,10 @@
+import 'package:call_on_duty/bloc/question/bloc/question_bloc.dart';
 import 'package:call_on_duty/designs/colors/app_colors.dart';
 import 'package:call_on_duty/designs/fonts/text_style.dart';
 import 'package:call_on_duty/model/question_model.dart';
 import 'package:call_on_duty/widgets/bg_music.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DescriptionPage extends StatefulWidget {
   final QuestionModel questionModel;
@@ -53,6 +55,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
+              context.read<QuestionBloc>().add(TimerStart());
               Navigator.pop(context);
             },
             child: Container(

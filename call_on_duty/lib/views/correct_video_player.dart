@@ -17,7 +17,6 @@ class CorrectVideoPlayerPage extends StatefulWidget {
 class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
   late VideoPlayerController videoPlayerController;
   bool isPlaying = true;
-  bool speechDone = false;
 
   @override
   void initState() {
@@ -35,9 +34,7 @@ class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
     await flutterTts.setPitch(.7);
     await flutterTts.speak(text);
     await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
-      setState(() {
-        speechDone = true;
-      });
+      Navigator.pop(context);
       playMusic();
     });
   }
@@ -51,8 +48,10 @@ class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
           if (videoPlayerController.value.duration != Duration.zero) {
             if (videoPlayerController.value.position ==
                 videoPlayerController.value.duration) {
-              videoStop();
-            } else {}
+              playMusic();
+            }
+          } else {
+            playMusicLowVolume();
           }
         });
       });

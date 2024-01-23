@@ -50,7 +50,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
             if (videoPlayerController.value.position ==
                 videoPlayerController.value.duration) {
               videoStop();
-            } else {}
+              playMusic();
+            }
+          } else {
+            playMusicLowVolume();
           }
         });
       });
@@ -60,7 +63,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   }
 
   videoStop() {
-    videoPlayerController.dispose();
     setState(() {
       isDescriptionOpen = true;
     });
@@ -68,8 +70,8 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   @override
   void dispose() {
-    videoPlayerController.dispose();
     speechStop();
+    videoPlayerController.dispose();
     super.dispose();
   }
 

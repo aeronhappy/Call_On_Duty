@@ -474,7 +474,7 @@ class QuestionRepository implements IQuestionRepository {
         const AnswerModel(
             id: 'a3',
             value: 'Alcohol',
-            image: 'assets/image_choices/antibacterial_soap.png',
+            image: 'assets/image_choices/alcohol.png',
             explanation:
                 'maglagay o magispray ng alcohol upang mawala agad ang mga bakterya.',
             video: 'assets/video_answer/L3_mamal_bite_3.mp4'),
@@ -526,7 +526,7 @@ class QuestionRepository implements IQuestionRepository {
         const AnswerModel(
             id: 'a3',
             value: 'Medicine (Ibuprofen)',
-            image: 'assets/image_choices/antibacterial_soap.png',
+            image: 'assets/image_choices/medicine.png',
             explanation:
                 'uminom ng antibiotic para mawala ang sakit na nararamdaman.',
             video: 'assets/video_answer/L3_fructure_3.mp4'),

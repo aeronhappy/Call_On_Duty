@@ -49,7 +49,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
         .read<QuestionBloc>()
         .add(GetRandomQuestions(questionDifficulty: widget.questionDifficulty));
     textToSpeech(bloodySpeech(widget.questionDifficulty));
-    timers = Timer.periodic(const Duration(milliseconds: 0), ((timer) {}));
+    timers = Timer.periodic(const Duration(seconds: 0), ((timer) {}));
   }
 
   @override
@@ -71,14 +71,28 @@ class _PlayTimePageState extends State<PlayTimePage> {
     }));
   }
 
-  void playVideo(QuestionModel questionModel) {
-    Navigator.pushNamed(context, PageRouter.videoPlayerPage,
+  void playVideo(QuestionModel questionModel) async {
+    timers.cancel();
+
+    var isTimerStart = await Navigator.pushNamed(
+        context, PageRouter.videoPlayerPage,
         arguments: questionModel);
+
+    if (isTimerStart == true) {
+      startTimer();
+    }
   }
 
-  void playCorrectVideo(AnswerModel answerModel) {
-    Navigator.pushNamed(context, PageRouter.correctVideoPlayerPage,
+  void playCorrectVideo(AnswerModel answerModel) async {
+    timers.cancel();
+
+    var isTimerStart = await Navigator.pushNamed(
+        context, PageRouter.correctVideoPlayerPage,
         arguments: answerModel);
+
+    if (isTimerStart == true) {
+      startTimer();
+    }
   }
 
 /////////////////
@@ -96,7 +110,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
           }
           if (state is CorrectAnswer) {
             setState(() {
-              myScore = myScore + 10;
+              myScore = myScore + 5;
               isScenarioCompleted = state.isScenarioCompleted;
             });
             playCorrectVideo(state.answerModel);
@@ -104,7 +118,9 @@ class _PlayTimePageState extends State<PlayTimePage> {
           if (state is WrongAnswer) {
             setState(() {
               newTimer = newTimer + 5;
-              myScore = myScore - 5;
+              if (myScore != 0) {
+                myScore = myScore - 5;
+              }
             });
             wrongAnswerDialog(context);
           }
@@ -153,23 +169,32 @@ class _PlayTimePageState extends State<PlayTimePage> {
                     itemBuilder: (context, questionIndex) {
                       return Column(
                         children: [
-                          SizedBox(height: 15),
+                          SizedBox(height: 50),
                           Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.alarm,
-                                  size: 40,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 10),
-                                Text(displaytime,
-                                    style: bodyText(
-                                        24, FontWeight.w500, Colors.white)),
-                                SizedBox(width: 20),
-                              ]),
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Score: $myScore",
+                                  style: titleText(
+                                      20, FontWeight.bold, Colors.white)),
+                              Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.alarm,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(displaytime,
+                                        style: bodyText(
+                                            20, FontWeight.bold, Colors.white)),
+                                    SizedBox(width: 20),
+                                  ]),
+                            ],
+                          ),
                           Padding(
                             padding: EdgeInsets.all(20),
                             child: Container(

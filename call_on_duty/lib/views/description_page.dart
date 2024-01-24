@@ -56,7 +56,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
           child: InkWell(
             onTap: () {
               context.read<QuestionBloc>().add(TimerStart());
-              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             child: Container(
               color: transparentBlackColor,

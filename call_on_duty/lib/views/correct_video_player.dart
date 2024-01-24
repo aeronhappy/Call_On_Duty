@@ -34,8 +34,8 @@ class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
     await flutterTts.setPitch(.7);
     await flutterTts.speak(text);
     await flutterTts.awaitSpeakCompletion(true).whenComplete(() {
-      Navigator.pop(context);
       playMusic();
+      videoStop();
     });
   }
 
@@ -61,7 +61,7 @@ class _CorrectVideoPlayerPageState extends State<CorrectVideoPlayerPage> {
   }
 
   videoStop() {
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override

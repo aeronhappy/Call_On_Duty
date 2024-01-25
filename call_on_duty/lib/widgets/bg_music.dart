@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 var audioP = AudioPlayer();
 var bgAudioPlayer = AudioCache(fixedPlayer: audioP);
 var effectsAudioPlayer = AudioCache();
+////ok to
 FlutterTts flutterTts = FlutterTts();
 
 List<String> bgList = <String>[

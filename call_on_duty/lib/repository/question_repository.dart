@@ -261,18 +261,18 @@ class QuestionRepository implements IQuestionRepository {
             video: 'assets/video_answer/L2_blister_2.mp4'),
         const AnswerModel(
             id: 'a3',
-            value: 'Bluster pad',
-            image: 'assets/image_choices/blister_pad.png',
-            explanation:
-                'takpan ng blister pad dahil makakatulong ito upang gumaling ang sugat o blister',
-            video: 'assets/video_answer/L2_blister_3.mp4'),
-        const AnswerModel(
-            id: 'a4',
             value: 'Ointment',
             image: 'assets/image_choices/ointment.png',
             explanation:
                 'makakatulong ito upang mas mapadali ang paggamot nito.',
             video: 'assets/video_answer/L2_blister_4.mp4'),
+        const AnswerModel(
+            id: 'a4',
+            value: 'Bluster pad',
+            image: 'assets/image_choices/blister_pad.png',
+            explanation:
+                'takpan ng blister pad dahil makakatulong ito upang gumaling ang sugat o blister',
+            video: 'assets/video_answer/L2_blister_3.mp4'),
       ],
     ),
 

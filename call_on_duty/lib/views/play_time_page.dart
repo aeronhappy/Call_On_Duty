@@ -28,7 +28,7 @@ class _PlayTimePageState extends State<PlayTimePage> {
   late Timer timers;
   int newTimer = 0;
   String displaytime = '00:00';
-  // bool isPaused = true;
+  bool isPaused = true;
 
   int myScore = 0;
 
@@ -330,6 +330,44 @@ class _PlayTimePageState extends State<PlayTimePage> {
                       );
                     }),
               ),
+            ),
+            AnimatedContainer(
+                duration: Duration(milliseconds: 100),
+                height: !isPaused ? MediaQuery.of(context).size.height : 0,
+                color: transparentBlackColor),
+            Positioned(
+              bottom: 50,
+              right: 10,
+              child: Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.red,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(100),
+                    onTap: () {
+                      if (isPaused) {
+                        context.read<QuestionBloc>().add(TimerPause());
+
+                        setState(() {
+                          isPaused = false;
+                        });
+                      } else {
+                        context.read<QuestionBloc>().add(TimerStart());
+                        setState(() {
+                          isPaused = true;
+                        });
+                      }
+                    },
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      child: Icon(
+                        !isPaused ? Icons.play_arrow : Icons.pause,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  )),
             ),
 
             ////
